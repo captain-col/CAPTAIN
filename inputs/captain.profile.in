@@ -1,0 +1,17 @@
+#########################################################################
+#
+# A file to be source to setup the CAPTAIN software when running a POSIX
+# shell (bash, sh, dash, ash, &c).
+
+# Make sure that other versions of the CAPTAIN scripts directory is removed
+# from the path. 
+PATH=$(echo $PATH | sed "s,:*.*CAPTAIN/scripts:\+,,")
+PATH=@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
+
+# Set the CMTPROJECTPATH
+export CMTPROJECTPATH
+CMTPROJECTPATH=@@CAPTAINROOT@@
+
+#########################################################################
+
+

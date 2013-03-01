@@ -1,0 +1,64 @@
+= Support for the CAPTAIN software =
+
+== Preliminaries ==
+
+The captain software doesn't need any special privileges to install, and is
+really intended to be setup in a normal user account.  However, it is easy
+to share one installation among several users.  At SBU, the captain
+software is setup in a captain group account, and we share the
+installation.  Individual users can still have their own work areas.
+
+The software is almost entirely installed for source code, and (as much
+effort as possible to make sure) it will install on most generic LINUX
+setups.  It does not require a specific version of scientific linux.  The
+source code is primarily managed using the SPI tools, in particular, the
+CMT code management tool.  
+
+== Configuring the Software ==
+
+This git repository contains the needed support to setup and
+install the CAPTAIN software.  It is checked out in the root of a CAPTAIN
+installation.  The initial configuration is done by running "configure.sh"
+which is in the top level directory.  The software can then be installed by
+running "capt-install" to create a directory tree.  As an example, here's
+how I install it (creating the work/captain/software directory as needed).
+I run bash, and I have a public ssh key set for the caption repository. 
+
+First, configure the software:
+
+cd ${HOME}/work/captain/software
+git clone captain@nngroup.physics.sunysb.edu:CAPTAIN
+cd CAPTAIN
+./configure.sh
+
+This creates files that can be sourced to setup the necessary environment.
+If I don't have an ssh key in the captain repository, I replace the git
+clone with
+
+git clone http://nngroup.physics.sunysb.edu/~captain/repo/CAPTAIN
+
+This will allow you to pull from the group repository, but not push.  It's
+easy to add a key, so if you are planning on working on the software very
+much, you should get a key added (ask at the next meeting).
+
+I like to be able to run the setup with an easy command, so I add the
+following line to my bashrc file
+
+alias capt-setup=${HOME}/work/captain/software/CAPTAIN/captain.profile
+
+You can have any number of independent captain installations and they won't
+interfere with each other.  The only requirement is that they are in
+different directories.  You chose which one you used by which
+captain.profile you source.
+
+== Installing the Software ==
+
+As of today, March 1, 2013, this section is mostly hypothetical.  
+
+After the CAPTAIN software is configured, you can install a release using
+the capt-install command.  You can choose a particular release using the
+--release option.  This works like
+
+capt-install
+
+Note that this command will take a long time to run.
