@@ -3,6 +3,10 @@
 # A file to be source to setup the CAPTAIN software when running a POSIX
 # shell (bash, sh, dash, ash, &c).
 
+# Set an alias to re-source this file again.  This can (and should) be done
+# every time you start working in a new package (or project) directory.
+alias capt-setup=". @@CAPTAINROOT@@/CAPTAIN/captain.profile"
+
 # Make sure that other versions of the CAPTAIN scripts directory is removed
 # from the path. 
 PATH=$(echo $PATH | sed "s,:*.*CAPTAIN/scripts:\+,,")

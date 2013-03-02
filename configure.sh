@@ -49,8 +49,8 @@ Setup files named
 have been created.  Users can source these files directly, or add the
 following aliases to their login scripts to simplify CAPTAIN setup.
 
-sh:  alias capt-setup=". ${CAPTAINROOT}/captain.profile"
-csh: alias capt-setup "source ${CAPTAINROOT}/captain.cshrc"
+sh:  alias capt-setup=". ${CAPTAINROOT}/CAPTAIN/captain.profile"
+csh: alias capt-setup "source ${CAPTAINROOT}/CAPTAIN/captain.cshrc"
 
 The environment will then be setup by running "capt-setup" If this
 command is run from inside of a CAPTAIN package or project, the local
