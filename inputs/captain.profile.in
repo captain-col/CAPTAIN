@@ -16,10 +16,10 @@ PATH=@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
 export CMTPROJECTPATH
 CMTPROJECTPATH=@@CAPTAINROOT@@
 
-# Store the root of this installation so that other scripts can use it.
-# The naming convention mimics CMT.
-export CAPTAINROOT
-CAPTAINROOT=@@CAPTAINROOT@@
+# Store the root of this installation so that the capt-* scripts can use
+# figure out where they are installed. 
+export CAPT_ROOT
+CAPT_ROOT=@@CAPTAINROOT@@
 
 # Setup CMT
 if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then

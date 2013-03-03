@@ -1,11 +1,15 @@
-#! /bin/dash
+#! /bin/sh
 
 # Download a file from the captain http tar file area.  This is mostly a
 # wrapper around curl and wget.  The file is downloaded from HTTPROOT into
 # TARROOT.
 
+# Set the default URL prefix to get the file from.
+
 HTTPROOT=http://nngroup.physics.sunysb.edu/~captain/tar
-TARROOT=${CAPTAINROOT}/tar
+
+# Set the default output directory.
+TARROOT=${CAPT_ROOT}/tar
 
 # Define the program to download files with.  The choices are "curl", or
 # "wget"
