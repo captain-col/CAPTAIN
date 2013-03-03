@@ -1,0 +1,33 @@
+#!/bin/dash
+
+# The version of CMT that is being installed.
+CMTVERSION=v1r26
+
+# The tar file with the source.  It will be gotten from the http tar file
+# area by capt-get-file. 
+CMTSOURCE=CMTv1r26.tar.gz
+
+##################################################
+# The actual work...
+cd ${CAPTAINROOT}
+
+# Get the file from the tar file web page.
+capt-get-file ${CMTSOURCE}
+
+# Unpack the tar file.
+tar xzf tar/${CMTSOURCE}
+
+# Configure CMT
+cd CMT/${CMTVERSION}/mgr
+/bin/sh INSTALL
+
+# Copy the setup files into the CAPTAIN area so that the captain.profile
+# can source them.
+cp setup.sh ${CAPTAINROOT}/CAPTAIN/cmt.profile
+cp setup.csh ${CAPTAINROOT}/CAPTAIN/cmt.cshrc
+
+# Setup and build  CMT.
+. ${CAPTAINROOT}/CAPTAIN/cmt.profile
+make
+
+##################################################

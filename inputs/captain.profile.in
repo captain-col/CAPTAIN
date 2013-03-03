@@ -21,6 +21,11 @@ CMTPROJECTPATH=@@CAPTAINROOT@@
 export CAPTAINROOT
 CAPTAINROOT=@@CAPTAINROOT@@
 
+# Setup CMT
+if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
+    . @@CAPTAINROOT@@/CAPTAIN/cmt.profile
+fi
+
 #########################################################################
 
 

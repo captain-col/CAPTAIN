@@ -79,3 +79,5 @@ capt-import-tar-file:: Take a tar file as input and add it to a git
    is used as a tag for the imported changeset.
 
 capt-install:: Install a release of the CAPTAIN software.
+
+capt-install-cmt:: Install CMT into this CAPTAIN release.
