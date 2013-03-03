@@ -16,6 +16,11 @@ PATH=@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
 export CMTPROJECTPATH
 CMTPROJECTPATH=@@CAPTAINROOT@@
 
+# Store the root of this installation so that other scripts can use it.
+# The naming convention mimics CMT.
+export CAPTAINROOT
+CAPTAINROOT=@@CAPTAINROOT@@
+
 #########################################################################
 
 

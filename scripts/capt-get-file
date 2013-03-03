@@ -1,0 +1,92 @@
+#! /bin/dash
+
+# Download a file from the captain http tar file area.  This is mostly a
+# wrapper around curl and wget.  The file is downloaded from HTTPROOT into
+# TARROOT.
+
+HTTPROOT=http://nngroup.physics.sunysb.edu/~captain/tar
+TARROOT=${CAPTAINROOT}/tar
+
+# Define the program to download files with.  The choices are "curl", or
+# "wget"
+
+DOWNLOADER="curl"
+
+usage () {
+cat <<EOF
+$0 file
+
+Get a file over http.
+
+Usage:
+
+    -u, --url-root=<url-root> : The base of the URL to get the file from.  By
+               default, this is ${HTTPROOT}
+    -o, --output=<directory> : The output directory.  By default, this 
+               is ${TARROOT}
+    --curl : Force using curl.
+    --wget : Force using wget.
+
+EOF
+}
+
+# Handle the input parameters.  This is mostly copied from the getopt
+# documentation.  It relies on gnu getopt.
+
+TEMP=$(getopt -o ho:u: \
+    --long curl,help,output:,url-root:,wget \
+    -- "$@")
+
+if [ $? != 0 ]; then
+    echo
+    echo "Try '$0 --help'"
+    exit 1;
+fi
+
+eval set -- "${TEMP}"
+
+while true; do
+    case "$1" in
+	-h|--help) usage; shift; exit 0;;
+	-o|--output) TARROOT=$2; shift 2;;
+	-u| --url-root) URLROOT=$2; shift 2;;
+	--curl) DOWNLOADER="curl"; shift;;
+	--wget) DOWNLOADER="wget"; shift;;
+	--) break;;
+	*) break;;
+    esac
+done
+shift
+
+TARFILE=$1
+
+if [ "x${TARFILE}" = x ]; then
+    usage
+    echo "Must provide a filename"
+    exit 1;
+fi
+
+if [ -f ${TARROOT}/${TARFILE} ]; then
+    echo "File already exists: '${TARROOT}/${TARFILE}'"
+    echo "    Move it out of the way if you need a clean copy."
+    exit 0;
+fi
+
+# Check if the output directory exists
+if [ -d ${TARROOT} ]; then
+    echo "File: '${TARROOT}/${TARFILE}'"
+else
+    if [ -e ${TARROOT} ]; then
+	echo "${TARROOT} is not a directory"
+	echo "   Move out of the way."
+    else
+        echo "Creating ${TARROOT}"
+	mkdir ${TARROOT}
+    fi
+fi
+
+case ${DOWNLOADER} in
+     curl) curl -o ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE};;
+     wget) wget -O ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE};;
+esac
+

@@ -62,3 +62,20 @@ the capt-install command.  You can choose a particular release using the
 capt-install
 
 Note that this command will take a long time to run.
+
+== Scripts ==
+
+All of these scripts reside in the CAPTAIN/scripts directory and are placed
+in the path when the profile is sourced.  Most of these scripts are
+documented by a usage message accessed with "--help".
+
+capt-get-file:: Get a file from the CAPTAIN web page (the tar file
+   directory), and place it in the "CAPTAIN/../tar" directory.  This is
+   mostly used by the installer to download tar files that will be unpacked
+   and installed.
+
+capt-import-tar-file:: Take a tar file as input and add it to a git
+   repository on the "upstream" branch.  This takes a version string that
+   is used as a tag for the imported changeset.
+
+capt-install:: Install a release of the CAPTAIN software.
