@@ -25,6 +25,16 @@ Options:
 EOF
 }
 
+###########################################################
+# Set the location of this install.
+CAPT_ROOT=$(dirname ${PWD})
+
+# Set default for the  CAPTAIN http pages.
+CAPT_HTTP='http://nngroup.physics.sunysb.edu/~captain'
+
+# Set the default for the CAPTAIN git server.
+CAPT_GIT='captain@nngroup.physics.sunysb.edu'
+
 # Make sure that this is being run from the top CAPTAIN directory.  Exit if we
 # are not.
 if [ x.git != x$(git rev-parse --git-dir) ]; then
@@ -36,8 +46,8 @@ fi
 # Handle the input parameters.  This is mostly copied from the getopt
 # documentation.  It relies on gnu getopt.
 
-TEMP=$(getopt -o ho:u: \
-    --long curl,help,output:,url-root:,wget \
+TEMP=$(getopt -o hu:g: \
+    --long help,url-root:,git-root: \
     -- "$@")
 
 if [ $? != 0 ]; then
@@ -51,6 +61,8 @@ eval set -- "${TEMP}"
 while true; do
     case "$1" in
 	-h|--help) usage; shift; exit 0;;
+	-u|--url-root) CAPT_HTTP=$2; shift 2;;
+	-g|--git-root) CAPT_GIT=$2; shift 2;;
 	--) break;;
 	*) break;;
     esac
@@ -58,17 +70,18 @@ done
 shift
 
 #####################################################################
-# Find the base directory for this installation, and set it in the
-# login scripts.  The login scripts have this parameterized as
-# "@@CAPTAINROOT@@".
+# Find the base directory and other "setables" for this installation,
+# and set it in the login scripts.  The login scripts have this
+# parameterized as "@@CAPTAINROOT@@", &c.
 
-CAPT_ROOT=$(dirname ${PWD})
 for input in inputs/*.in; do
     output=`basename ${input} .in`
     echo "Write $output from $input"
     cat $input | \
-    sed "s:@@CAPTAINROOT@@:${CAPT_ROOT}:g" \
-    > $output
+	sed "s-@@CAPTAINHTTP@@-${CAPT_HTTP}-" | \
+	sed "s-@@CAPTAINGIT@@-${CAPT_GIT}-" | \
+	sed "s:@@CAPTAINROOT@@:${CAPT_ROOT}:g" \
+	> $output
 done
 
 cat <<EOF

@@ -21,6 +21,14 @@ CMTPROJECTPATH=@@CAPTAINROOT@@
 export CAPT_ROOT
 CAPT_ROOT=@@CAPTAINROOT@@
 
+# Store the HTTP page location.
+export CAPT_HTTP
+CAPT_HTTP=@@CAPTAINHTTP@@
+
+# Store the GIT repository base.
+export CAPT_GIT
+CAPT_GIT=@@CAPTAINGIT@@
+
 # Setup CMT
 if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
     . @@CAPTAINROOT@@/CAPTAIN/cmt.profile

@@ -5,8 +5,7 @@
 # TARROOT.
 
 # Set the default URL prefix to get the file from.
-
-HTTPROOT=http://nngroup.physics.sunysb.edu/~captain/tar
+HTTPROOT=${CAPT_HTTP}/tar
 
 # Set the default output directory.
 TARROOT=${CAPT_ROOT}/tar
