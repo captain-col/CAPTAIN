@@ -22,14 +22,16 @@ def CaptureShell(command):
 
     return (result.stdout.read(), result.stderr.read(), result.returncode)
 
-def Shell(command):
+def Shell(command,quiet=False):
     """ Return a tuple with the first element being the stdout, 
     the second being stderr, and the third being the status"""
+
+    if not quiet: print "$", command
 
     result = subprocess.Popen(command,
                               shell=True,
                               universal_newlines=True)
-    result.wait()
+    retcode = result.wait();
 
-    return result
-
+    if retcode != 0:
+        raise subprocess.CalledProcessError(retcode,command)

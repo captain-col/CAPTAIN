@@ -1,0 +1,207 @@
+#! /usr/bin/env python
+#
+# Clone a repository from a repository saved at ${CAPT_GIT}
+#
+
+
+def usage():
+    print """
+capt-clone repoName
+
+This clones a repository from the main caption git server.  The
+name can reference a CMT package (the usual case), a CMT project,
+or a plain vanilla git repository.  The type of repository will be
+figured out by capt-clone.  Before cloning the repository, this will
+make sure that the object doesn't exist.
+
+Where the repositories end up.
+
+Plain GIT: A plain git repository will end up in a new sub-directory
+with the same name as the repository.  This is the usual git clone
+behavior.  In otherwords, for a plain repository, capt-clone
+duplicates the git clone behavior.  If a plain git repository is in a
+directory, the directory structure on the main server will be
+preserved.  That means that "capt-clone subName/repoName" will be
+cloned into the subName directory (i.e. into "subName/repoName").
+
+CMT Package: A repository that holds a CMT package will be cloned
+without a version directory, and will be in a new sub-directory.  This
+is almost the same behavior as for a plain git repository, but if a
+version was specified on the command line, the final step of the clone
+will be to checkout the  branch, or tag corresponding to the version.
+Recall that a CMT package (with no version directory) is marked by a
+"packageName/cmt" directory that contains a "requirements" and a
+"version.cmt" file.  If the package has an offset, then the repository
+will be specified as "offsetName/packageName", and it will be cloned
+into the "offsetName/packageName" sub-directory.
+
+CMT Project: A CMT project is kept in a directory specifying the
+project name, and a sub-directory specifying the project version.  The
+project is specified by it's name.  The version of the project can be
+set on the command line, or will set to "master".  If the version is
+specified, then the project is cloned into the correct version
+directory, and then the version tag is checked out.  
+
+Options:
+
+    -h, --help : Print this message.
+
+Examples (with fictitious names)
+
+  A project:
+
+    capt-clone LCGCMT            # clone into LCGCMT/master/...
+    capt-clone LCGCMT 1.2.3      # clone into LCGCMT/1.2.3/...
+
+  A package:
+ 
+    capt-clone captPolicy        # clone into captPolicy
+    capt-clone captPolicy  v1.2  # clone and then "git checkout v1.2"
+
+  A package with an offset:
+
+    capt-clone calib/captCal     # clone into calib/captCal w/ version "master"
+
+  A plain vanilla git repository
+
+    capt-clone CAPTAIN           # clone into CAPTAIN (just like "git clone")
+  
+"""
+
+import os
+import sys
+import getopt
+import tempfile
+import shutil
+
+from captain import shell
+
+try:
+    options, args = getopt.gnu_getopt(sys.argv[1:], 
+                                      "hv:",
+                                      ["help","version="])
+except:
+    usage()
+    print "ERROR: Invalid option."
+    sys.exit(1)
+
+# If this is true then a package version directory will be used (only
+# applies for a package).  Not currently implemented.
+withVersionDirectory = False
+
+for option, value in options:
+    if option == "-h" or option == "--help":
+        usage()
+        sys.exit(0)
+    else:
+        usage()
+        print "ERROR: Inconceivable.  This can't happen."
+        print "    \'I do not think you know what that word means\'"
+        sys.exit(1)
+
+# Check that we have the right number of arguments.      
+if len(args) < 1 or len(args) > 2: 
+    usage()
+    print "ERROR: Wrong number of arguments."
+    sys.exit(1)
+
+# Get the repository name.  This is the offset of the repository
+# relative to CAPT_GIT
+repositoryName = args[0]
+
+# Get the version (only relevant if this is a package or project).
+versionTag = "master"
+if len(args) > 1: versionTag=args[1]
+
+print "Clone:   ", repositoryName
+print "Version: ", versionTag
+
+# Check to see that there isn't anything in the way of the clone.  If
+# there is something in the way, this is going to exit.
+
+# First check if there is a git repository in the way.  This actually
+# also handles packages as long as there isn't a version directory.
+if os.path.exists(repositoryName + "/.git"):
+    print """ERROR: Repository exists at the clone target"""
+    sys.exit(1)
+
+# check if there is a version directory is being used, and a
+# package is in the way.
+packageRoot = repositoryName
+if withVersionDirectory: packageRoot = packageRoot + "/" + versionTag
+
+if os.path.exists(repositoryName + "/" + versionTag + "/.git"):
+    print """ERROR: Repository at the clone target"""
+    sys.exit(1)
+
+if os.path.exists(repositoryName + "/" + versionTag + "/cmt/requirements"):
+    print """ERROR: Repository at the clone target"""
+    sys.exit(1)
+
+# Now check if there is a project in the way.
+if os.path.exists(repositoryName + "/" + versionTag + "/cmt/project.cmt"):
+    print """ERROR: Project at the clone target"""
+    sys.exit(1)
+
+# Generate a temporary name for the incoming repository that is
+# guarranteed not to exist.  The file name will look like "git_8H9lJt"
+# where the last 6 characters are random(ish).
+tempRepo = tempfile.mktemp(dir="",prefix="git_")
+
+# Clone the requested repository into a directory named by tempRepo.
+# This lets the script look at the contents and distinguish between
+# the different types of repositories.  This is slightly more
+# complicated than a simble clone because I want to be sure that all
+# the branches and tags show up.  Normally a "git clone" will clone
+# all branchs, and then checkout master.  The other branches will be
+# left as "origin/<branch-name> and need to be checked out explicitly.
+#
+# The following lines are a souped up version of:
+#
+# result = shell.Shell("git clone ${CAPT_GIT}" + repositoryName
+#                              + " " + tempRepo)
+
+try:
+    shell.Shell("mkdir " + tempRepo)
+    shell.Shell("(cd " + tempRepo + 
+                "; git clone --bare ${CAPT_GIT}" + repositoryName + " .git)")
+    shell.Shell("(cd " + tempRepo + "; git config --unset core.bare)")
+    shell.Shell("(cd " + tempRepo + "; git reset --hard)")
+except:
+    print "ERROR: git clone error (see the messages above). "
+    print "    After poking around, you should delete the ", tempRepo, \
+        "directory"
+    sys.exit(1)
+    
+# Move the git repository to the requested version
+if versionTag != "master":
+    shell.Shell("(cd " + tempRepo + "; "
+                        + "git checkout " + versionTag + ")")
+
+# Check if the repository holds a CMT package.
+if os.path.exists(tempRepo + "/cmt/requirements"):
+    targetDirectory = os.path.dirname(repositoryName)
+    if len(targetDirectory) > 0: os.makedirs(targetDirectory)
+    if withVersionDirectory:
+        if not os.path.exists(repositoryName):
+            os.makedirs(repositoryName)
+        shutil.move(tempRepo,repositoryName+"/"+versionTag)
+    else:
+        shutil.move(tempRepo,repositoryName)
+    sys.exit(0)
+
+# Check if the repository holds a CMT project
+if os.path.exists(tempRepo + "/cmt/project.cmt"):
+    targetDirectory = os.path.dirname(repositoryName)
+    if len(targetDirectory) > 0: os.makedirs(targetDirectory)
+    shutil.move(tempRepo,repositoryName+"/"+versionTag)
+    sys.exit(0)
+
+
+# It's a plain vanilla git repository.  Just rename it to the right
+# directory.
+targetDirectory = os.path.dirname(repositoryName)
+if len(targetDirectory) > 0: os.makedirs(targetDirectory)
+print tempRepo, repositoryName
+os.rename(tempRepo,repositoryName)
+sys.exit(0)
