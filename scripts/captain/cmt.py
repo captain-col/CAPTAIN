@@ -210,7 +210,7 @@ def GetProjects(dir="."):
     parser.EndElementHandler = _xmlEndElement
     parser.CharacterDataHandler = _xmlElementData
 
-    xmlOutput = captain.shell.Shell("(cd " + dir + ";cmt show projects -xml)",);
+    xmlOutput = captain.shell.CaptureShell("(cd " + dir + ";cmt show projects -xml)",);
     parser.Parse(xmlOutput[0])
     return _currentElement
 
@@ -223,14 +223,14 @@ def GetUses(dir="."):
     parser.EndElementHandler = _xmlEndElement
     parser.CharacterDataHandler = _xmlElementData
 
-    xmlOutput = captain.shell.Shell("(cd " + dir + ";cmt show uses -xml)");
+    xmlOutput = captain.shell.CaptureShell("(cd " + dir + ";cmt show uses -xml)");
     parser.Parse(xmlOutput[0])
     return _currentElement
 
 def GetMissing(dir="."):
     """Get a list of the missing packages used by the present one"""
 
-    output = captain.shell.Shell("(cd " + dir + ";cmt show uses)");
+    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show uses)");
 
     missingList = []
     for line in output[1].splitlines():

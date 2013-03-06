@@ -29,11 +29,14 @@ EOF
 # Set the location of this install.
 CAPT_ROOT=$(dirname ${PWD})
 
-# Set default for the  CAPTAIN http pages.
+# Set default for the CAPTAIN http pages.  This will be used with
+# punctuation between the variable and the pages.
 CAPT_HTTP='http://nngroup.physics.sunysb.edu/~captain'
 
-# Set the default for the CAPTAIN git server.
-CAPT_GIT='captain@nngroup.physics.sunysb.edu'
+# Set the default for the CAPTAIN git server.  This will be used as
+# "${CAPT_GIT}repository_name".  Notice that there is no punctuation
+# between the variable and the repository.
+CAPT_GIT='captain@nngroup.physics.sunysb.edu:'
 
 # Make sure that this is being run from the top CAPTAIN directory.  Exit if we
 # are not.

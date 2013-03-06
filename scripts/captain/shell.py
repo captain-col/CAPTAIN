@@ -10,7 +10,7 @@
 
 import subprocess
 
-def Shell(command):
+def CaptureShell(command):
     """ Return a tuple with the first element being the stdout, 
     the second being stderr, and the third being the status"""
 
@@ -21,4 +21,15 @@ def Shell(command):
                               stderr=subprocess.PIPE)
 
     return (result.stdout.read(), result.stderr.read(), result.returncode)
+
+def Shell(command):
+    """ Return a tuple with the first element being the stdout, 
+    the second being stderr, and the third being the status"""
+
+    result = subprocess.Popen(command,
+                              shell=True,
+                              universal_newlines=True)
+    result.wait()
+
+    return result
 
