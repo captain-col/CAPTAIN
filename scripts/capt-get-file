@@ -88,6 +88,14 @@ else
     fi
 fi
 
+# Check if the output directory README file exists
+if [ ! -f ${TARROOT}/README ]; then
+    cat > ${TARROOT}/README <<EOF
+This directory contains a cache tar files downloaded by capt-get-file.  It 
+can be safely removed after an installation is complete.
+EOF
+fi
+
 case ${DOWNLOADER} in
      curl) curl -o ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE};;
      wget) wget -O ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE};;
