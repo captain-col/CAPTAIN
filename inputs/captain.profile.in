@@ -1,4 +1,5 @@
 #########################################################################
+#! /bin/bash
 #
 # A file to be source to setup the CAPTAIN software when running a POSIX
 # shell (bash, sh, dash, ash, &c).
@@ -29,11 +30,36 @@ CAPT_HTTP=@@CAPTAINHTTP@@
 export CAPT_GIT
 CAPT_GIT=@@CAPTAINGIT@@
 
+# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
+export CMTSITE
+CMTSITE="CAPTAIN"
+
 # Setup CMT
 if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
     . @@CAPTAINROOT@@/CAPTAIN/cmt.profile
 fi
+echo Setup CMT version `cmt version` with CMTSITE set to ${CMTSITE}
+
+# Now source the setup file for the current package.
+setupfile="/no/such/file"
+for s in ${PWD}/setup.sh \
+    ${PWD}/cmt/setup.sh \
+    ${PWD}/../cmt/setup.sh \
+    ${PWD}/../../cmt/setup.sh \
+    ${PWD}/../../../cmt/setup.sh \
+    ${PWD}/../../../../cmt/setup.sh \
+    ${PWD}/../../../../../cmt/setup.sh ; do
+    if [ -f ${s} ]; then
+        setupfile=${s}
+        break
+    fi
+done
+if [ -f ${setupfile} ]; then
+    echo Setup with ${setupfile}
+    . ${setupfile}
+else
+    echo Environment configured, but specific package is setup
+fi
 
 #########################################################################
-
-
+# -*- mode: shell-script-mode; -*-
