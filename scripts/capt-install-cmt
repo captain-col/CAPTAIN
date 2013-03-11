@@ -1,11 +1,16 @@
-#! /bin/sh
+#! /bin/bash
+# This must be a bash script since some of the CMT scripts are not sh safe.
 
 # The version of CMT that is being installed.
-CMTVERSION=v1r26
+# CMTVERSION=v1r26
+CMTVERSION=v1r20p20090520
 
-# The tar file with the source.  It will be gotten from the http tar file
-# area by capt-get-file. 
-CMTSOURCE=CMTv1r26.tar.gz
+# The tar file with the source.  It will be gotten from the http tar
+# file area by capt-get-file.  The CMT file name can usually be found
+# using the version, but it's occasionally necessary to set an
+# explicit file name (e.g. CMTSOURCE=CMTv1r26.tar.gz [not actually
+# needed])
+CMTSOURCE=CMT${CMTVERSION}.tar.gz
 
 ##################################################
 # The actual work...
@@ -27,7 +32,7 @@ cp setup.sh ${CAPT_ROOT}/CAPTAIN/cmt.profile
 cp setup.csh ${CAPT_ROOT}/CAPTAIN/cmt.cshrc
 
 # Setup and build  CMT.
-. ${CAPT_ROOT}/CAPTAIN/cmt.profile
+source ./setup.sh
 make
 
 ##################################################
