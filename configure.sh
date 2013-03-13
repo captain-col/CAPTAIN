@@ -36,7 +36,7 @@ CAPT_HTTP='http://nngroup.physics.sunysb.edu/~captain'
 # Set the default for the CAPTAIN git server.  This will be used as
 # "${CAPT_GIT}repository_name".  Notice that there is no punctuation
 # between the variable and the repository.
-CAPT_GIT=`git config remote.origin.url | sed s/CAPTAIN//`
+CAPT_GIT=`git config remote.origin.url | sed s/CAPTAIN.git// | sed s/CAPTAIN//`
 
 # Make sure that this is being run from the top CAPTAIN directory.  Exit if we
 # are not.
