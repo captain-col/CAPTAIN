@@ -165,8 +165,17 @@ try:
     shell.Shell("mkdir " + tempRepo)
     shell.Shell("(cd " + tempRepo + 
                 "; git clone --bare ${CAPT_GIT}" + repositoryName + " .git)")
-    shell.Shell("(cd " + tempRepo + "; git config --unset core.bare)")
-    shell.Shell("(cd " + tempRepo + "; git reset --hard)")
+    shell.Shell("(cd " + tempRepo + ";"
+                + "git config core.bare false;"
+                + "git config core.logAllRefUpdates true;"
+                + "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*';"
+                + "git config branch.master.remote origin;"
+                + "git config branch.master.merge refs/heads/master;"
+                +" )")
+    shell.Shell("(cd " + tempRepo + ";"
+                + "git reset --hard;"
+                + "git pull --all;"
+                + ")")
 except:
     print "ERROR: git clone error (see the messages above). "
     print "    After poking around, you should delete the ", tempRepo, \
