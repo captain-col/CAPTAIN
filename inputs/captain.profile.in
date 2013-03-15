@@ -58,7 +58,7 @@ if [ -f ${setupfile} ]; then
     echo Setup with ${setupfile}
     . ${setupfile}
 else
-    echo Environment configured, but specific package is setup
+    echo Environment configured, but specific package is not setup
 fi
 
 #########################################################################
