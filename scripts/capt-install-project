@@ -1,0 +1,149 @@
+#! /usr/bin/env python
+#
+# Get a project from it's repository and install it.  This will check out
+# any dependent projects, and then check out the packages in each of the
+# projects.  
+
+import os
+import sys
+import getopt
+import shutil
+from sets import Set
+from captain import shell
+from captain import cmt
+
+def usage():
+    print """
+capt-install-project repoName [version]
+
+This clones a repository containing a project from the main caption
+git server.  It then checks for project dependencies and if necessary
+clones them.  After all projects are cloned, it will use
+capt-install-package to install the container package in each project
+(declared by the "container package version" directive in project.cmt.
+All projects will be installed into the ${CAPT_ROOT} directory.
+
+Options:
+
+    -h, --help : Print this message.
+    -c, --compile : Run "cmt broadcast make all"
+
+Examples:
+
+    capt-install-project captain-release 
+         # Install captain-release/master/... plus all of its dependencies.
+
+    capt-install-project captain-release 1.2.3 
+         # Install captain-release/1.2.3/... plus all of its dependencies.
+"""
+
+def CloneProject(project,version):
+    """ Clone a project into ${CAPT_ROOT}.  This can be used from any
+    directory."""
+
+    # The root directory for the install.
+    captRoot = os.environ['CAPT_ROOT']
+
+    # Check if the project exists
+    if not os.path.exists(captRoot + "/" 
+                          + project 
+                          + "/" + version 
+                          + "/cmt/project.cmt"):
+        # The project isn't there, so try to clone it.
+        try:
+            shell.Shell("(cd ${CAPT_ROOT}; capt-clone " 
+                        + project + " " + version + ")") 
+        except:
+            print "ERROR: Cannot clone", project, version
+            sys.exit(1)
+
+def InitializeProject(project,initialized,target):
+    """Make sure that a project is initialized. This can be called
+    multiple times on the same project"""
+    if project.name in initialized: return True
+    for used in project.uses:
+        if used.name not in initialized: return False
+    initialized.add(project.name)
+    print "Initialize Project:", project.name
+    container = cmt.GetContainer(project.cmtpath)
+    if container == None: return True
+    print "    Container:", container.name, container.version
+    print "    Path:     ", project.cmtpath
+    compileTarget = ""
+    if target != None: compileTarget = "--make=" + target
+    shell.Shell("(cd " + project.cmtpath 
+                + "; capt-install-package " 
+                +" "+ compileTarget
+                +" "+ container.name 
+                +" "+ container.version + ")")
+    return True
+
+try:
+    options, args = getopt.gnu_getopt(sys.argv[1:], 
+                                      "hc",
+                                      ["help",
+                                       "compile"])
+except:
+    usage()
+    print "ERROR: Invalid option."
+    sys.exit(1)
+
+compileTarget=None
+
+for option, value in options:
+    if option == "-h" or option == "--help":
+        usage()
+        sys.exit(0)
+    elif option == "-c" or option == "--compile":
+        compileTarget = "help"
+    else:
+        usage()
+        print "ERROR: Inconceivable.  This can't happen."
+        print "    \'I do not think you know what that word means\'"
+        sys.exit(1)
+
+# Check that we have the right number of arguments.      
+if len(args) < 1 or len(args) > 2: 
+    usage()
+    print "ERROR: Wrong number of arguments."
+    sys.exit(1)
+
+# Get the repository name.  This is the offset of the repository
+# relative to CAPT_GIT
+repositoryName = args[0]
+
+# Get the version
+versionTag = "master"
+if len(args) > 1: versionTag=args[1]
+
+print "Install Project:", repositoryName, "   Version:", versionTag
+
+CloneProject(repositoryName,versionTag)
+
+projectRoot = os.environ["CAPT_ROOT"] +"/"+ repositoryName +"/"+ versionTag 
+
+# Make sure all of the missing projects have been cloned.
+lastCloned=""
+while True:
+    missing = cmt.GetMissingProjects(projectRoot)
+    if len(missing) < 1: break
+    for project in missing:
+        # Skip wild card projects and hope for the best...
+        if project.version.find("*") >= 0: continue
+        print "Clone missing project: ", project.name, project.version
+        CloneProject(project.name,project.version)
+        if lastCloned == project.name: 
+            print "ERROR: Cannot find ", project.name
+            sys.exit(1)
+        lastCloned = project.name
+        break
+
+# Now check that all the projects are initialized.
+dependencies = cmt.GetProjects(projectRoot)
+initializedProjects = Set()
+while True:
+    allInitialized = True
+    for project in dependencies:
+        if not InitializeProject(project,initializedProjects,compileTarget):
+            allInitialized = False
+    if allInitialized: break

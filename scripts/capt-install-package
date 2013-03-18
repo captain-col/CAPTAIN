@@ -1,0 +1,134 @@
+#! /usr/bin/env python
+#
+# Get a package from it's repository and install it.  This will check out
+# any dependent packages and checkout at the same CMTPATH.
+
+import os
+import sys
+import getopt
+import shutil
+from sets import Set
+from captain import shell
+from captain import cmt
+
+def usage():
+    print """
+capt-install-package repoName [version]
+
+This clones a repository containing a package from the main caption
+git server.  It then checks for package dependencies and clones them.
+After all packages are cloned, it configure the packages.  If the
+"--make=<target>" option has been set, then "cmt broadcast make
+<target>" will be run.
+
+Options:
+
+    -h, --help : Print this message.
+    -m, --make=<target> : Run cmt broadcast make target.
+
+Examples:
+
+    capt-install-project captain-release 
+         # Install captain-release/master/... plus all of its dependencies.
+
+    capt-install-project captain-release 1.2.3 
+         # Install captain-release/1.2.3/... plus all of its dependencies.
+"""
+
+def ClonePackage(package,version):
+    """ Clone a package.  This returns the package cmt directory
+    relative to the current directory."""
+
+    # Check if the package exists
+    if os.path.exists(package+ "/cmt/requirements"): 
+        return package + "/cmt"
+    if os.path.exists(package+"/"+version+"/cmt/requirements"):
+        return package+"/"+version+"/cmt"
+
+    try:
+        shell.Shell("(capt-clone " 
+                    + package + " " + version + ")") 
+    except:
+        print "ERROR: Cannot clone", package, version
+        sys.exit(1)
+
+    return package + "/cmt"
+        
+def InitializePackage(package,initialized):
+    """Make sure that a package is initialized. This can be called
+    multiple times on the same package"""
+    if package.name in initialized: return True
+    for used in package.use:
+        if used.name not in initialized: return False
+    initialized.add(package.name)
+    print "Initialize Package:", package.name
+
+try:
+    options, args = getopt.gnu_getopt(sys.argv[1:], 
+                                      "hm:",
+                                      ["help",
+                                       "make="])
+except:
+    usage()
+    print "ERROR: Invalid option."
+    sys.exit(1)
+
+# If this is not None, the make target is the target to broadcast in
+# the installed package.
+makeTarget = None
+
+for option, value in options:
+    if option == "-h" or option == "--help":
+        usage()
+        sys.exit(0)
+    elif option == "-m" or option == "--make":
+        makeTarget=value;
+    else:
+        usage()
+        print "ERROR: Inconceivable.  This can't happen."
+        print "    \'I do not think you know what that word means\'"
+        sys.exit(1)
+
+# Check that we have the right number of arguments.      
+if len(args) < 1 or len(args) > 2: 
+    usage()
+    print "ERROR: Wrong number of arguments."
+    sys.exit(1)
+
+# Get the repository name.  This is the offset of the repository
+# relative to CAPT_GIT
+repositoryName = args[0]
+
+# Get the version
+versionTag = "master"
+if len(args) > 1: versionTag=args[1]
+
+print "Install Package:", repositoryName, "   Version:", versionTag
+
+packageRoot = ClonePackage(repositoryName,versionTag)
+
+# Make sure all of the missing packages have been cloned.
+lastCloned=""
+while True:
+    missing = cmt.GetMissing(packageRoot)
+    if len(missing) < 1: break
+    for package in missing:
+        # Skip wild card packages and hope for the best...
+        if package.version.find("*") >= 0: continue
+        print "Clone missing package: ", package.name, package.version
+        ClonePackage(package.name,package.version)
+        if lastCloned == package.name: 
+            print "ERROR: Cannot find ", package.name
+            sys.exit(1)
+        lastCloned = package.name
+        break
+
+# Configure the packages.
+shell.Shell("(cd " + packageRoot 
+            + "; cmt broadcast cmt config)")
+
+if makeTarget != None:
+    shell.Shell("(cd " + packageRoot 
+                + "; . ./setup.sh"
+                + "; cmt broadcast make " +makeTarget+")")
+    

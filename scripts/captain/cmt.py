@@ -17,6 +17,15 @@
 #            packages.  This is parsed from the error output of the
 #            "(cd <dir>; cmt show uses)" command.
 #
+#  captain.cmt.GetMissingProjects(dir=".") -- Return a list of the missing
+#            projects.  This is parsed from the error output of the
+#            "(cd <dir>; cmt show projects)" command.
+#
+#  captain.cmt.GetContainer(dir=".") -- Return a Package object for
+#            the package specified in the project.cmt "container"
+#            directive.  The only fields that are set are the "name"
+#            and "version".
+# 
 # This provide the classes
 #
 # captain.cmt.Project -- A pure data class with fields for
@@ -210,11 +219,36 @@ def GetProjects(dir="."):
     parser.EndElementHandler = _xmlEndElement
     parser.CharacterDataHandler = _xmlElementData
 
-    xmlOutput = captain.shell.CaptureShell("(cd " + dir + ";cmt show projects -xml)",);
+    xmlOutput = captain.shell.CaptureShell("(cd " + dir 
+                                           + ";cmt show projects -xml)");
     parser.Parse(xmlOutput[0])
     return _currentElement
 
-    
+def GetContainer(dir="."):
+    out = captain.shell.CaptureShell("(cd " + dir + ";cmt show container)");
+    container = Package()
+    # Check for warning messages.
+    for line in out[1].splitlines():
+        if 0 < line.find("No container specified"): return None;
+        if 0 < line.find("No project found"): return None;
+        if line.find(" container ") < 0: continue
+        line = line[line.find("container"):]
+        if line.find(" not found"): line = line[:line.find(" not found")]
+        parsedLine = line.split()
+        container.name = parsedLine[1]
+        if len(parsedLine) > 2: container.version = parsedLine[2]
+        return container
+    # Check for normal output.
+    for line in out[0].splitlines():
+        if line.find("container") < 0: continue
+        line = line[line.find("container"):]
+        if line.find(" not found"): line = line[:line.find(" not found")]
+        parsedLine = line.split()
+        container.name = parsedLine[1]
+        if len(parsedLine) > 2: container.version = parsedLine[2]
+        return container
+    return None
+
 def GetUses(dir="."):
     """Get a list of the packages used by the present one"""
 
@@ -223,7 +257,8 @@ def GetUses(dir="."):
     parser.EndElementHandler = _xmlEndElement
     parser.CharacterDataHandler = _xmlElementData
 
-    xmlOutput = captain.shell.CaptureShell("(cd " + dir + ";cmt show uses -xml)");
+    xmlOutput = captain.shell.CaptureShell("(cd " + dir 
+                                           + ";cmt show uses -xml)");
     parser.Parse(xmlOutput[0])
     return _currentElement
 
@@ -244,5 +279,24 @@ def GetMissing(dir="."):
         if len(parsedLine) > 1: package.version = parsedLine[1]
         if len(parsedLine) > 2: package.offset = parsedLine[2]
         missingList.append(package)
+
+    return missingList
+
+def GetMissingProjects(dir="."):
+    """Get a list of the missing packages used by the present one"""
+
+    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show projects)");
+
+    missingList = []
+    for line in output[1].splitlines():
+        if line.find("#CMT")<0: continue
+        if line.find("Warning:")<0: continue
+        line = line[line.rfind("found:")+7:]
+        line = line[line.find("Warning: Project"):line.find("requested by")]
+        parsedLine = line.split()
+        project = Project()
+        project.name = parsedLine[2]
+        if len(parsedLine) > 3: project.version = parsedLine[3]
+        missingList.append(project)
 
     return missingList
