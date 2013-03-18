@@ -27,6 +27,7 @@ Options:
 
     -h, --help : Print this message.
     -c, --compile : Run "cmt broadcast make all"
+    -m, --make=<target> : Run "cmt broadcast make <target>"
 
 Examples:
 
@@ -80,9 +81,10 @@ def InitializeProject(project,initialized,target):
 
 try:
     options, args = getopt.gnu_getopt(sys.argv[1:], 
-                                      "hc",
+                                      "hcm:",
                                       ["help",
-                                       "compile"])
+                                       "compile"
+                                       "make="])
 except:
     usage()
     print "ERROR: Invalid option."
@@ -95,7 +97,9 @@ for option, value in options:
         usage()
         sys.exit(0)
     elif option == "-c" or option == "--compile":
-        compileTarget = "help"
+        compileTarget = "all"
+    elif option == "-m" or option == "--make":
+        compileTarget = value
     else:
         usage()
         print "ERROR: Inconceivable.  This can't happen."

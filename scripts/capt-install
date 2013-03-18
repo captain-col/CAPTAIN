@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# First make sure that cmt is installed.
+capt-install-cmt
+
+# Make sure that CMT is setup right for the captain environment
+source ${CAPT_ROOT}/CAPTAIN/captain.profile
+
+# Install the software.  This should be changed to the release package
+# eventually.  It should also take a specific version from the command
+# line.
+capt-install-project -c LCGCMT master
+
