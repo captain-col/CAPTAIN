@@ -78,8 +78,8 @@ from captain import shell
 
 try:
     options, args = getopt.gnu_getopt(sys.argv[1:], 
-                                      "hv:",
-                                      ["help","version="])
+                                      "h",
+                                      ["help"])
 except:
     usage()
     print "ERROR: Invalid option."
