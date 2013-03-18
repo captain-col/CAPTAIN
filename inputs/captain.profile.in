@@ -35,9 +35,13 @@ export CMTSITE
 CMTSITE="CAPTAIN"
 
 # Setup CMT
-if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
-    . @@CAPTAINROOT@@/CAPTAIN/cmt.profile
+if [ ! -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
+   echo CMT not setup.
+   return 
 fi
+
+. @@CAPTAINROOT@@/CAPTAIN/cmt.profile
+
 echo Setup CMT version `cmt version` with CMTSITE set to ${CMTSITE}
 
 # Now source the setup file for the current package.
