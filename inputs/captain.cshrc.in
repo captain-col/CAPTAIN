@@ -1,4 +1,5 @@
 #####################################################################
+#! /bin/tcsh
 #
 # This file should contain
 #
@@ -7,3 +8,34 @@
 # but it doesn't. 
 #
 #####################################################################
+
+# Set an alias to re-source this file again.  This can (and should) be done
+# every time you start working in a new package (or project) directory.
+alias capt-setup "source @@CAPTAINROOT@@/CAPTAIN/captain.cshrc"
+
+# Make sure that other versions of the CAPTAIN scripts directory is removed
+# from the path. 
+setenv PATH `echo $PATH | sed "s,:*.*CAPTAIN/scripts:\+,,"`
+setenv PATH `@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}`
+rehash
+
+# Set the CMTPROJECTPATH
+setenv CMTPROJECTPATH @@CAPTAINROOT@@
+
+# Store the root of this installation so that the capt-* scripts can use
+# figure out where they are installed. 
+setenv CAPT_ROOT @@CAPTAINROOT@@
+
+# Store the HTTP page location.
+setenv CAPT_HTTP @@CAPTAINHTTP@@
+
+# Store the GIT repository base.
+setenv CAPT_GIT @@CAPTAINGIT@@
+
+# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
+setenv CMTSITE "CAPTAIN"
+
+# Setup CMT
+if ( -f @@CAPTAINROOT@@/CAPTAIN/cmt.cshrc ) then
+   source @@CAPTAIN@@/CAPTAIN/cmt.cshrc
+endif
