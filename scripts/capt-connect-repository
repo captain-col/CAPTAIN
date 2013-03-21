@@ -60,14 +60,10 @@ fi
 # Find the current package or project name.
 if [ -f project.cmt ]; then
    NAME=`grep '^project' project.cmt | sed 's/project \(.*\)/\\1/'`
-   echo 
    echo Connect project named $NAME to central repository
-   echo 
 elif [ -f requirements ]; then
    NAME=`grep '^package' requirements | sed 's/package \(.*\)/\\1/'`
-   echo 
    echo Connect package named $NAME to central repository
-   echo 
 fi
 
 if [ "x${NAME}" = "x" ]; then
@@ -93,28 +89,24 @@ else
     echo Local .gitignore already exists.  Not installing a new one.
 fi
 
-# Set the origin
-if [ x`git config remote.origin.url` = x ]; then
-    git config remote.origin.url ${CAPT_GIT}${NAME}
-    echo Set remote.origin.url to `git config remote.origin.url`
-else
-    echo
-    echo Origin already set to `git config remote.origin.url`
-    echo
-    echo "You can reset this by hand with:"
-    echo "git config remote.origin.url ${CAPT_GIT}${NAME}"
-fi
+# Define a uniform call to git config.  This makes the code easier to read.
+config () {
+    if [ x`git config "$1"` = x ]; then
+	git config "$1" "$2"
+	echo Set "$1" to `git config "$1"`
+    else
+	echo
+	echo "###" "$1" is `git config "$1"`
+	echo "The value was not changed.  You can reset this by hand with:"
+	echo "  git config $1 $2"
+    fi
+}
 
-if [ x`git config remote.origin.fetch` = x ]; then
-    git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
-    echo Set remote.origin.fetch to `git config remote.origin.fetch`
-else
-    echo
-    echo Fetch already set to `git config remote.origin.fetch`
-    echo
-    echo "You can reset this by hand with:"
-    echo "git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*"
-fi
+# Set the config options.
+config remote.origin.fetch     '+refs/heads/*:refs/remotes/origin/*'
+config remote.origin.url       ${CAPT_GIT}${NAME}
+config branch.master.remote    origin
+config branch.master.merge     refs/heads/master
 
 # Add the files that *MUST* be there
 if [ -f project.cmt ]; then git add project.cmt; fi
