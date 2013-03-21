@@ -1,0 +1,15 @@
+.svn
+CVS
+Linux-*
+*~
+setup.sh
+cleanup.sh
+setup.csh
+cleanup.csh
+*.make
+*.makesav
+*.lock
+.gdb*
+*.pyc
+native_version.cmt
+Makefile
