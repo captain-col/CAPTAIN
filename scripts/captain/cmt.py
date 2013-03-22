@@ -26,7 +26,11 @@
 #            directive.  The only fields that are set are the "name"
 #            and "version".
 # 
-# This provide the classes
+#  captaion.cmt.GetPackage(dir=".") -- Return a package object for the
+#            current package.  This will fill "type", "name",
+#            "version", "offset", and "root"
+#
+# This provides the classes
 #
 # captain.cmt.Project -- A pure data class with fields for
 #    type -- String with value "project". Just says what the class is.
@@ -47,10 +51,12 @@
 #           from the subdirectory containing the project.
 #     offset -- The subdirectory that contains the package.
 #     root -- The package root.
+#     project -- The project with this package.
 #     cmtpath -- The root of the path that would be set inside the project.
 #     order -- ?? Defined by CMT, but I'm not sure what it is.
 #
 
+import re
 import captain.shell
 import xml.parsers.expat
 
@@ -76,12 +82,12 @@ class Project:
 """
     def __init__(self):
         self.type = "project"
-        self.name = ""
-        self.version = ""
-        self.cmtpath = ""
-        self.uses = []
-        self.clients = []
-        self.order = ""
+        self.name = None
+        self.version = None
+        self.cmtpath = None
+        self.uses = None
+        self.clients = None
+        self.order = None
 
     def __repr__(self):
         rep = "<project"
@@ -100,41 +106,56 @@ class Package:
     type -- String with value "package". Just says what the class is.
           This is in both the Project and Package classes
 
-    name -- The name of the project.
+    name -- The name of the package.
 
-    version -- The version string for the project.  This is derived
-          from the subdirectory containing the project.
+    version -- The version string for the package.
 
     offset -- The subdirectory that contains the package.
 
     root -- The package root.
 
-    cmtpath -- The root of the path that would be set inside the project.
+    project -- The project with this package
+
+    cmtpath -- The root of the path that would be set inside the package.
 
     order -- ?? Defined by CMT, but I'm not sure what it is.
 
 """
     def __init__(self):
         self.type = "package"
-        self.name = ""
-        self.offset = ""
-        self.root = ""
-        self.version = ""
-        self.cmtpath = ""
-        self.clients = []
-        self.order = ""
+        self.name = None
+        self.offset = None
+        self.root = None
+        self.project = None
+        self.version = None
+        self.cmtpath = None
+        self.clients = None
+        self.order = None
 
     def __repr__(self):
         rep = "<package"
         rep = rep + " n: "
-        if self.offset != "": rep = rep + self.offset + "/"
+        if self.offset != None: rep = rep + self.offset + "/"
         rep = rep + self.name
         rep = rep + " v: " + str(self.version)
         rep = rep + " r: " + str(self.root)
-        rep = rep + " p: " + str(self.cmtpath)
+        if self.project != None: rep = rep + " p: " + str(self.offset)
+        rep = rep + " P: " + str(self.cmtpath)
         rep = rep + " O: " + str(self.order)
         rep = rep + ">"
         return rep
+
+    def SplitVersion(self):
+        match=re.match(r"[^0-9]*([0-9]+)",self.version);
+        if match == None: return None
+        major = int(match.group(1))
+        match=re.match(r"[^0-9]*[0-9]+[^0-9]+([0-9]+)",self.version);
+        if match == None: return (major)
+        minor = int(match.group(1))
+        match=re.match(r"[^0-9]*[0-9]+[^0-9]+[0-9]+[^0-9]+([0-9]+)",self.version);
+        if match == None: return (major, minor)
+        patch = int(match.group(1))
+        return (major, minor, patch)
 
 # Private global variables.
 _elementStack = []
@@ -300,3 +321,24 @@ def GetMissingProjects(dir="."):
         missingList.append(project)
 
     return missingList
+
+def GetMacroValue(macro,dir="."):
+    """Get the value of a CMT macro."""
+    output = captain.shell.CaptureShell(
+        "(cd " + dir 
+        + "; cmt show macro_value " + macro + ")")
+    if output[0] == "": return None
+    value = output[0].splitlines()[0]
+    return value
+
+def GetPackage(dir="."):
+    """Get information about the current package."""
+    package = Package()
+
+    package.name = GetMacroValue("package")
+    package.version = GetMacroValue("version")
+    package.offset = GetMacroValue(package.name + "_offset")
+    package.root =  GetMacroValue(package.name + "_root")
+    package.cmtpath =  GetMacroValue(package.name + "_cmtpath")
+    package.uses = GetUses()
+    return package

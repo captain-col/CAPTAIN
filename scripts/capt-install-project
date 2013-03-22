@@ -61,11 +61,14 @@ def CloneProject(project,version):
 def InitializeProject(project,initialized,target):
     """Make sure that a project is initialized. This can be called
     multiple times on the same project"""
+    if project.name == None: return True
     if project.name in initialized: return True
+    if project.uses == None: return True;
     for used in project.uses:
         if used.name not in initialized: return False
     initialized.add(project.name)
     print "Initialize Project:", project.name
+    if project.cmtpath == None: return True
     container = cmt.GetContainer(project.cmtpath)
     if container == None: return True
     print "    Container:", container.name, container.version
@@ -133,6 +136,8 @@ while True:
     if len(missing) < 1: break
     for project in missing:
         # Skip wild card projects and hope for the best...
+        if project.name == None: continue
+        if project.version == None: continue
         if project.version.find("*") >= 0: continue
         print "Clone missing project: ", project.name, project.version
         CloneProject(project.name,project.version)
