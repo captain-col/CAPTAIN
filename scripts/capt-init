@@ -1,50 +1,48 @@
 #! /bin/bash
 #
-# Connect an existing package or project to a git repository.
+# Initialize an existing package or project directory to work with an
+# empty, bare central repository.
+
+export PROGRAM
+PROGRAM=`basename $0`
 
 usage () {
     cat <<EOF | more
 Usage: 
-   `basename $0`                # No arguments allowed.
+   ${PROGRAM}            # No arguments allowed.
 
-This isn't run very often, but automates the "annoying" parts of
-adding packages or projects.  It's only run once, the first time a
-package or project is created, from inside the new package (or
-project) cmt directory.  In general, a new package is created by
+Initialize a new package or project.  This isn't run very often, but
+automates the "annoying" parts of adding packages or projects.  It's
+used in place of "git init", which means it's run once the first time
+a package or project is created.  As with "git init", this only
+creates the local repository, and the central (bare) repository still
+needs to be created (see below).  Unlike "git init", this must be run
+from inside the new package (or project) cmt directory. 
 
 CREATE A NEW REPOSITORY
-
   1) Clone gitolite-admin repository (capt-clone gitolite-admin)
-
   2) Edit the gitolite-admin/conf/gitolite.conf file.  The needed
      steps are documented in that file.  The name you use here is the
      name of the new package (or project).  For instance to add a new
      package called captainRelease you would add the lines:
-
-        repo captainRelease
-              RW+   = @all
-
+                  repo captainRelease
+                       RW+   = @all
   3) Add and commit your changes to your local repo (git commit -a)
-
   4) Push you changes (git push)
-  
+        note: This can be done after the new package or project has
+              already been initialized using ${PROGRAM}.  However, you
+              can't push until the new repository has been created.
+
 CREATE A NEW PACKAGE
-
-[ 0) Move to where you want the package to be created. ]
-
-1) cmt create <package-name> master
-
-2) Run capt-connect-repository in the new package's cmt directory
-
-     -- This will run git-init, install and add .gitignore file, and
-        configure the repository origin.
-
-4) Do your initial work on the new package and add it to (the local) git.
-
-5) Push your new package to the central repository (git push --all)
+  [ 0) Move to where you want the package to be created. ]
+  1) cmt create <package-name> master
+  2) Run ${PROGRAM} in the new package's cmt directory
+       -- This will run git-init, install and add .gitignore file, and
+          configure the repository origin.
+  4) Do your initial work on the new package and add it to (the local) git.
+  5) Push your new package to the central repository (git push --all)
 
 CREATE A NEW PROJECT
-
   This is the same as creating a new package, but you use 
       cmt create_project <project-name> master 
   instead of the plain "cmt create" command.
