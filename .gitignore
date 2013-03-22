@@ -4,3 +4,4 @@ captain.cshrc
 cmt.profile
 cmt.cshrc
 *.pyc
+*\#*

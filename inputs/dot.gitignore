@@ -13,3 +13,4 @@ cleanup.csh
 *.pyc
 native_version.cmt
 Makefile
+*\#*
