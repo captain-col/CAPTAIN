@@ -91,13 +91,19 @@ class Project:
 
     def __repr__(self):
         rep = "<project"
-        rep = rep + " n: " + str(self.name)
-        rep = rep + " v: " + str(self.version)
-        rep = rep + " p: " + str(self.cmtpath)
-        rep = rep + " u: " + str(self.uses)
-        rep = rep + " c: " + str(self.clients)
-        rep = rep + " O: " + str(self.order)
-        rep = rep + ">"
+        if self.name != None: rep += " n: " + str(self.name)
+        else: rep += " n: None"
+        if self.version != None: rep += " v: " + str(self.version)
+        else: rep += " v: None"
+        if self.cmtpath != None: rep += " P: " + str(self.cmtpath)
+        else: rep += " P: None"
+        if self.uses != None: rep += " u: " + str(self.uses)
+        else: rep += " u: None"
+        if self.clients != None: rep += " c: " + str(self.clients)
+        else: rep += " c: None"
+        if self.order != None: rep += " O: " + str(self.order)
+        else: rep += " O: None"
+        rep += ">"
         return rep
 
 class Package:
@@ -134,14 +140,20 @@ class Package:
 
     def __repr__(self):
         rep = "<package"
-        rep = rep + " n: "
+        rep += " n: "
         if self.offset != None: rep = rep + self.offset + "/"
-        rep = rep + self.name
-        rep = rep + " v: " + str(self.version)
-        rep = rep + " r: " + str(self.root)
+        elif self.name != None: rep += self.name
+        else: rep += "None"
+        if self.version != None: rep += " v: " + str(self.version)
+        else: rep += " v: None"
+        if self.root != None: rep += " r: " + str(self.root)
+        else: rep += " r: None"
         if self.project != None: rep = rep + " p: " + str(self.offset)
-        rep = rep + " P: " + str(self.cmtpath)
-        rep = rep + " O: " + str(self.order)
+        if self.cmtpath != None: rep += " P: " + str(self.cmtpath)
+        else: rep += " P: None"
+        if self.clients != None: rep += " c: " + str(self.clients)
+        if self.order != None: rep += " O: " + str(self.order)
+        else: rep += " O: None"
         rep = rep + ">"
         return rep
 
@@ -150,10 +162,11 @@ class Package:
         if match == None: return None
         major = int(match.group(1))
         match=re.match(r"[^0-9]*[0-9]+[^0-9]+([0-9]+)",self.version);
-        if match == None: return (major)
+        if match == None: return (major, 0, 0)
         minor = int(match.group(1))
-        match=re.match(r"[^0-9]*[0-9]+[^0-9]+[0-9]+[^0-9]+([0-9]+)",self.version);
-        if match == None: return (major, minor)
+        match=re.match(r"[^0-9]*[0-9]+[^0-9]+[0-9]+[^0-9]+([0-9]+)",
+                       self.version);
+        if match == None: return (major, minor, 0)
         patch = int(match.group(1))
         return (major, minor, patch)
 
