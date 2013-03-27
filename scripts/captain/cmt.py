@@ -38,6 +38,7 @@
 #    name -- The name of the project.
 #    version -- The version string for the project.  This is derived
 #          from the subdirectory containing the project.
+#    current -- True if this is the current project.
 #    cmtpath -- The root of the path that would be set inside the project.
 #    uses -- A list of projects used by this project.
 #    clients -- A list of projects that use this project.
@@ -84,6 +85,7 @@ class Project:
         self.type = "project"
         self.name = None
         self.version = None
+        self.current = False
         self.cmtpath = None
         self.uses = None
         self.clients = None
@@ -91,6 +93,7 @@ class Project:
 
     def __repr__(self):
         rep = "<project"
+        if self.current: rep += " (current)"
         if self.name != None: rep += " n: " + str(self.name)
         else: rep += " n: None"
         if self.version != None: rep += " v: " + str(self.version)
@@ -158,14 +161,14 @@ class Package:
         return rep
 
     def SplitVersion(self):
-        match=re.match(r"[^0-9]*([0-9]+)",self.version);
+        match=re.match(r"[^0-9]*([0-9]+)",self.version)
         if match == None: return None
         major = int(match.group(1))
-        match=re.match(r"[^0-9]*[0-9]+[^0-9]+([0-9]+)",self.version);
+        match=re.match(r"[^0-9]*[0-9]+[^0-9]+([0-9]+)",self.version)
         if match == None: return (major, 0, 0)
         minor = int(match.group(1))
         match=re.match(r"[^0-9]*[0-9]+[^0-9]+[0-9]+[^0-9]+([0-9]+)",
-                       self.version);
+                       self.version)
         if match == None: return (major, minor, 0)
         patch = int(match.group(1))
         return (major, minor, patch)
@@ -183,19 +186,20 @@ def _xmlStartElement(name,attr):
     _currentName = name
     if name == "project":
         _currentElement = Project()
-        _elementStack.append(_currentElement);
+        if "current" in attr: _currentElement.current = True
+        _elementStack.append(_currentElement)
     elif name == "package":
         _currentElement = Package()
-        _elementStack.append(_currentElement);
+        _elementStack.append(_currentElement)
     elif name == "projects":
         _currentElement = []
-        _elementStack.append(_currentElement);
+        _elementStack.append(_currentElement)
     elif name == "uses":
         _currentElement = []
-        _elementStack.append(_currentElement);
+        _elementStack.append(_currentElement)
     elif name == "clients":
         _currentElement = []
-        _elementStack.append(_currentElement);
+        _elementStack.append(_currentElement)
 
 def _xmlEndElement(name):
     """ An internal function to handle parsing CMT XML"""
@@ -213,14 +217,14 @@ def _xmlEndElement(name):
     elif name == "projects":
         _currentElement = _elementStack.pop()
     elif name == "uses":
-        elem = _elementStack.pop();
+        elem = _elementStack.pop()
         if len(_elementStack)>0:
             _currentElement = _elementStack[-1]
             _currentElement.uses = elem
         else:
             _currentElement = elem
     elif name == "clients":
-        elem = _elementStack.pop();
+        elem = _elementStack.pop()
         if len(_elementStack)>0:
             _currentElement = _elementStack[-1]
             _currentElement.clients = elem
@@ -253,18 +257,25 @@ def GetProjects(dir="."):
     parser.EndElementHandler = _xmlEndElement
     parser.CharacterDataHandler = _xmlElementData
 
+    global _elementStack
+    global _currentElement
+    global _currentName
+    _elementStack = []
+    _currentElement = None
+    _currentName = ""
+
     xmlOutput = captain.shell.CaptureShell("(cd " + dir 
-                                           + ";cmt show projects -xml)");
+                                           + ";cmt show projects -xml)")
     parser.Parse(xmlOutput[0])
     return _currentElement
 
 def GetContainer(dir="."):
-    out = captain.shell.CaptureShell("(cd " + dir + ";cmt show container)");
+    out = captain.shell.CaptureShell("(cd " + dir + ";cmt show container)")
     container = Package()
     # Check for warning messages.
     for line in out[1].splitlines():
-        if 0 < line.find("No container specified"): return None;
-        if 0 < line.find("No project found"): return None;
+        if 0 < line.find("No container specified"): return None
+        if 0 < line.find("No project found"): return None
         if line.find(" container ") < 0: continue
         line = line[line.find("container"):]
         if line.find(" not found"): line = line[:line.find(" not found")]
@@ -291,15 +302,22 @@ def GetUses(dir="."):
     parser.EndElementHandler = _xmlEndElement
     parser.CharacterDataHandler = _xmlElementData
 
+    global _elementStack
+    global _currentElement
+    global _currentName
+    _elementStack = []
+    _currentElement = None
+    _currentName = ""
+
     xmlOutput = captain.shell.CaptureShell("(cd " + dir 
-                                           + ";cmt show uses -xml)");
+                                           + ";cmt show uses -xml)")
     parser.Parse(xmlOutput[0])
     return _currentElement
 
 def GetMissing(dir="."):
     """Get a list of the missing packages used by the present one"""
 
-    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show uses)");
+    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show uses)")
 
     missingList = []
     for line in output[1].splitlines():
@@ -319,7 +337,7 @@ def GetMissing(dir="."):
 def GetMissingProjects(dir="."):
     """Get a list of the missing packages used by the present one"""
 
-    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show projects)");
+    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show projects)")
 
     missingList = []
     for line in output[1].splitlines():
@@ -346,12 +364,38 @@ def GetMacroValue(macro,dir="."):
 
 def GetPackage(dir="."):
     """Get information about the current package."""
+    if not CheckCMT(): return None
+
     package = Package()
 
-    package.name = GetMacroValue("package")
-    package.version = GetMacroValue("version")
-    package.offset = GetMacroValue(package.name + "_offset")
-    package.root =  GetMacroValue(package.name + "_root")
-    package.cmtpath =  GetMacroValue(package.name + "_cmtpath")
-    package.uses = GetUses()
+    package.name = GetMacroValue("package", dir=dir)
+    package.version = GetMacroValue("version", dir=dir)
+    package.offset = GetMacroValue(package.name + "_offset", dir=dir)
+    package.root =  GetMacroValue(package.name + "_root", dir=dir)
+    package.cmtpath =  GetMacroValue(package.name + "_cmtpath", dir=dir)
+    package.uses = GetUses(dir)
     return package
+
+def GetProject(dir="."):
+    """Get information about the current package."""
+    if not CheckCMT(): return None
+
+    for project in GetProjects(dir):
+        if project.current: return project
+
+    return None
+
+def CheckCMT():
+    """ Check if CMT is available."""
+
+    foundVersion = False
+    try:
+        cmtVersion = captain.shell.CaptureShell("cmt version")
+        for line in cmtVersion[0].splitlines():
+            if (re.compile(r'v(\d+)r(\d+)').match(line)):
+                foundVersion = True
+    except:
+        foundVersion = False
+
+    return foundVersion
+
