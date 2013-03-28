@@ -40,7 +40,7 @@ def ClonePackage(package,version):
     relative to the current directory."""
 
     if package == None: return sys.exit(1)
-+    if version == None: return sys.exit(1)
+    if version == None: return sys.exit(1)
 
     # Check if the package exists
     if os.path.exists(package+ "/cmt/requirements"): 
