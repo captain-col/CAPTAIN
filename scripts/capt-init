@@ -47,10 +47,12 @@ CREATE A NEW PROJECT
       cmt create_project <project-name> master 
   instead of the plain "cmt create" command.
 
+Run with the --apply option to actually initialize the repository.
+    i.e. capt-init --apply
 EOF
 }
 
-if [ $# != 0 ]; then
+if [ "x${1}" != "x--apply" ]; then
     usage
     exit 1
 fi
