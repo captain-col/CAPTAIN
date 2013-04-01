@@ -137,5 +137,5 @@ shell.Shell("(cd " + packageRoot
 if makeTarget != None:
     shell.Shell("(cd " + packageRoot 
                 + "; . ./setup.sh"
-                + "; cmt broadcast make -j1 " +makeTarget+")")
+                + "; cmt broadcast make " +makeTarget+")")
     
