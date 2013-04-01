@@ -129,10 +129,13 @@ while True:
 
 # Configure the packages.
 shell.Shell("(cd " + packageRoot 
+            + "; cmt config)")
+
+shell.Shell("(cd " + packageRoot 
             + "; cmt broadcast cmt config)")
 
 if makeTarget != None:
     shell.Shell("(cd " + packageRoot 
                 + "; . ./setup.sh"
-                + "; cmt broadcast make " +makeTarget+")")
+                + "; cmt broadcast make -j1 " +makeTarget+")")
     
