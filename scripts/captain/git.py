@@ -8,6 +8,7 @@
 # get information from the locally installed git.
 
 import re
+import os.path
 from captain import shell
 
 
@@ -63,8 +64,8 @@ def BranchExists(name):
     
 def BranchName():
     """Get the name of the current branch."""
-    status = shell.CaptureShell("git symbolic-ref --short HEAD");
-    if len(status[0]) > 0: return status[0].splitlines()[0]
+    status = shell.CaptureShell("git symbolic-ref HEAD");
+    if len(status[0]) > 0: return os.path.basename(status[0].splitlines()[0])
     return "detached"
 
 def GetBranches(glob=None):
