@@ -12,6 +12,7 @@ import time
 import socket
 import textwrap
 
+from captain import shell
 from captain import git
 from captain import cmt
 
@@ -270,13 +271,20 @@ def GetFreezeInformation(name, version):
     """Take the package name and version and write a header for the
     freeze information."""
 
+    # Do the bestest with the leastest to figure out the machine name.
+    # This is always hard to get a satisfactory, portable solution.
+    try:
+        machineName = shell.CaptureShell("hostname -A")[0]
+    except:
+        machineName = socket.getfqdn(socket.gethostname())
+
     info = "\\section " \
         + name + "_" + TextVersion(version) + "_history" \
         " Version " + FormatVersion(version) + "\n\n"
     info += "Freeze information:\n"
     info += "   - Freeze Date: " + time.ctime() + "\n"
     info += "   - Freeze User: " + pwd.getpwuid(os.getuid())[0] + "\n"
-    info += "   - Freeze Host: " + socket.getfqdn(socket.gethostname())+"\n"
+    info += "   - Freeze Host: " + machineName+"\n"
     info += "\n"
     
     ## If there is a name note it too.
