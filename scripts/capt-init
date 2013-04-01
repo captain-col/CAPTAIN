@@ -19,20 +19,6 @@ creates the local repository, and the central (bare) repository still
 needs to be created (see below).  Unlike "git init", this must be run
 from inside the new package (or project) cmt directory. 
 
-CREATE A NEW REPOSITORY
-  1) Clone gitolite-admin repository (capt-clone gitolite-admin)
-  2) Edit the gitolite-admin/conf/gitolite.conf file.  The needed
-     steps are documented in that file.  The name you use here is the
-     name of the new package (or project).  For instance to add a new
-     package called captainRelease you would add the lines:
-                  repo captainRelease
-                       RW+   = @all
-  3) Add and commit your changes to your local repo (git commit -a)
-  4) Push you changes (git push)
-        note: This can be done after the new package or project has
-              already been initialized using ${PROGRAM}.  However, you
-              can't push until the new repository has been created.
-
 CREATE A NEW PACKAGE
   [ 0) Move to where you want the package to be created. ]
   1) cmt create <package-name> master
@@ -46,6 +32,20 @@ CREATE A NEW PROJECT
   This is the same as creating a new package, but you use 
       cmt create_project <project-name> master 
   instead of the plain "cmt create" command.
+
+CREATE A NEW REPOSITORY
+  1) Clone gitolite-admin repository (capt-clone gitolite-admin)
+  2) Edit the gitolite-admin/conf/gitolite.conf file.  The needed
+     steps are documented in that file.  The name you use here is the
+     name of the new package (or project).  For instance to add a new
+     package called captainRelease you would add the lines:
+                  repo captainRelease
+                       RW+   = @all
+  3) Add and commit your changes to your local repo (git commit -a)
+  4) Push your changes (git push)
+        note: This can be done after the new package or project has
+              already been initialized using ${PROGRAM}.  However, you
+              can't push until the new repository has been created.
 
 Run with the --apply option to actually initialize the repository.
     i.e. capt-init --apply
