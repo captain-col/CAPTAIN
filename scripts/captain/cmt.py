@@ -383,7 +383,6 @@ def GetProject(dir="."):
     if not CheckCMT(): return None
 
     for project in GetProjects(dir):
-        print project
         if project.current: return project
 
     return None
