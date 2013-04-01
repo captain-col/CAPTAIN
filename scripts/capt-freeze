@@ -416,7 +416,7 @@ def GetHistoryFile(name):
             h.write("/*! \\page " + name + "History"
                     + " History for the " 
                     + name + " Package \n"
-                    + "*/\n")
+                    + "*/\n\n")
             h.close()
         except IOError:
             sys.exit("Unable to create the history file")

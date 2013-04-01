@@ -369,6 +369,8 @@ def GetPackage(dir="."):
     package = Package()
 
     package.name = GetMacroValue("package", dir=dir)
+    if package.name == "cmt_standalone": return None
+
     package.version = GetMacroValue("version", dir=dir)
     package.offset = GetMacroValue(package.name + "_offset", dir=dir)
     package.root =  GetMacroValue(package.name + "_root", dir=dir)
@@ -381,6 +383,7 @@ def GetProject(dir="."):
     if not CheckCMT(): return None
 
     for project in GetProjects(dir):
+        print project
         if project.current: return project
 
     return None
