@@ -176,6 +176,10 @@ try:
                 + "git reset --hard;"
                 + "git pull --all;"
                 + ")")
+    shell.Shell("(cd " + tempRepo + ";"
+                + "capt-track-upstream;"
+                + ")")
+
 except:
     print "ERROR: git clone error (see the messages above). "
     print "    After poking around, you should delete the ", tempRepo, \

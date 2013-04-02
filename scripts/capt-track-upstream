@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+#  Make sure the repository is configured to track all of the upstream
+# branches.  
+
+usage () {
+    cat <<EOF
+Usage: capt-track-upstream
+
+    No arguments.  This is run in a local repository to set it up so
+that it tracks all of the upstream branchs.  These branches are all in
+refs/remotes/origin.  This command can be run multiple times, and it's
+a good idea to run it once in a while to make sure that your
+.git/config is up to date.
+
+EOF
+}
+
+if [ $# -gt 0 ]; then usage; exit 0; fi
+
+for r in `git rev-parse --symbolic --remotes=origin`; do
+    git branch --set-upstream `basename $r` $r
+done
