@@ -1,5 +1,6 @@
 .svn
 CVS
+dox
 Linux-*
 *~
 setup.sh
@@ -19,3 +20,4 @@ v*r*p*_history.txt
 *_version.hxx
 *_version_LinkDef.h
 *_version.h
+*.root
