@@ -61,6 +61,8 @@ done
 if [ -f ${setupfile} ]; then
     echo Setup with ${setupfile}
     . ${setupfile}
+    export cmt
+    cmt=`dirname ${setupfile}`
 else
     echo Environment configured, but specific package is not setup
 fi
