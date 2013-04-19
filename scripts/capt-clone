@@ -161,13 +161,13 @@ tempRepo = tempfile.mktemp(dir="",prefix="git_")
 # result = shell.Shell("git clone ${CAPT_GIT}" + repositoryName
 #                              + " " + tempRepo)
 
-fullRepositoryName = repositoryName
-if fullRepositoryName[-4:] != ".git": fullRepositoryName += ".git"
+fullRepoName = repositoryName
+if fullRepoName[-4:] != ".git": fullRepoName += ".git"
 
 try:
     shell.Shell("mkdir " + tempRepo)
     shell.Shell("(cd " + tempRepo + 
-                "; git clone --bare ${CAPT_GIT}" + repositoryName + " .git)")
+                "; git clone --bare ${CAPT_GIT}" + fullRepoName + " .git)")
     shell.Shell("(cd " + tempRepo + ";"
                 + "git config core.bare false;"
                 + "git config core.logAllRefUpdates true;"
