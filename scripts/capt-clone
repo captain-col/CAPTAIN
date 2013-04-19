@@ -161,6 +161,9 @@ tempRepo = tempfile.mktemp(dir="",prefix="git_")
 # result = shell.Shell("git clone ${CAPT_GIT}" + repositoryName
 #                              + " " + tempRepo)
 
+fullRepositoryName = repositoryName
+if fullRepositoryName[-4:] != ".git": fullRepositoryName += ".git"
+
 try:
     shell.Shell("mkdir " + tempRepo)
     shell.Shell("(cd " + tempRepo + 
