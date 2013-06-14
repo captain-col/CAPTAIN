@@ -29,7 +29,12 @@ usage = """Usage: %prog [options]
     compatible; and, patches represent bug fixes.
 
     Unless the "--apply" option is provided, this will not modify the
-    state of the repository (i.e. it defaults to "--dry-run")."""
+    state of the repository (i.e. it defaults to "--dry-run").
+
+    To publish the newly frozen version to the upstream repository, you 
+    still need to run
+        git push --all --tags
+"""
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-d","--dry-run",
                   action="store_true", default=True, dest="dryRun",
@@ -607,3 +612,7 @@ if options.dryRun:
     print textwrap.fill("Use the --apply option to freeze the package or "
                    "run this command with the --help option for usage "
                    "information")
+else:
+    print textwrap.fill("Don't forget to run 'git push --all --tags' to "
+                        "make this available in the upstream repository.")
+    
