@@ -9,5 +9,4 @@ source ${CAPT_ROOT}/CAPTAIN/captain.profile
 # Install the software.  This should be changed to the release package
 # eventually.  It should also take a specific version from the command
 # line.
-capt-install-project -c LCGCMT master
-
+capt-install-project -c captain-release master
