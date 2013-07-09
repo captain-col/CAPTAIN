@@ -172,6 +172,7 @@ try:
                 + "git config core.bare false;"
                 + "git config core.logAllRefUpdates true;"
                 + "git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*';"
+                + "git config remote.origin.url ${CAPT_GIT}" + repositoryName + ";"
                 + "git config branch.master.remote origin;"
                 + "git config branch.master.merge refs/heads/master;"
                 +" )")
