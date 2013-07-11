@@ -16,7 +16,7 @@ alias capt-setup "source @@CAPTAINROOT@@/CAPTAIN/captain.cshrc"
 # Make sure that other versions of the CAPTAIN scripts directory is removed
 # from the path. 
 setenv PATH `echo $PATH | sed "s,:*.*CAPTAIN/scripts:\+,,"`
-setenv PATH `@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}`
+setenv PATH @@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
 rehash
 
 # Set the CMTPROJECTPATH
