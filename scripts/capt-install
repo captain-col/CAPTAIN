@@ -1,5 +1,16 @@
 #!/bin/bash
 
+echo Start capt-install: $(date)
+
+# Print the system being used.
+uname -a
+
+# Print the distribution being used.  This assumes we are working on an lsb
+# system so it only works for linux.
+if [ -x /usr/bin/lsb_release ]; then
+    /usr/bin/lsb_release -i -d -r -c
+fi
+
 # First make sure that cmt is installed.
 capt-install-cmt
 
@@ -10,3 +21,5 @@ source ${CAPT_ROOT}/CAPTAIN/captain.profile
 # eventually.  It should also take a specific version from the command
 # line.
 capt-install-project -c captain-release master
+
+echo Complete capt-install: $(date)
