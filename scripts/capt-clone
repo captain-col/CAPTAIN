@@ -200,8 +200,7 @@ if os.path.exists(tempRepo + "/cmt/requirements"):
     targetDirectory = os.path.dirname(repositoryName)
     if len(targetDirectory) > 0: os.makedirs(targetDirectory)
     if withVersionDirectory:
-        if not os.path.exists(repositoryName):
-            os.makedirs(repositoryName)
+        if not os.path.exists(repositoryName): os.makedirs(repositoryName)
         shutil.move(tempRepo,repositoryName+"/"+versionTag)
     else:
         shutil.move(tempRepo,repositoryName)
@@ -209,8 +208,7 @@ if os.path.exists(tempRepo + "/cmt/requirements"):
 
 # Check if the repository holds a CMT project
 if os.path.exists(tempRepo + "/cmt/project.cmt"):
-    targetDirectory = os.path.dirname(repositoryName)
-    if len(targetDirectory) > 0: os.makedirs(targetDirectory)
+    if not os.path.exists(repositoryName): os.makedirs(repositoryName)
     shutil.move(tempRepo,repositoryName+"/"+versionTag)
     sys.exit(0)
 
@@ -219,6 +217,5 @@ if os.path.exists(tempRepo + "/cmt/project.cmt"):
 # directory.
 targetDirectory = os.path.dirname(repositoryName)
 if len(targetDirectory) > 0: os.makedirs(targetDirectory)
-print tempRepo, repositoryName
-os.rename(tempRepo,repositoryName)
+shutil.move(tempRepo,repositoryName)
 sys.exit(0)
