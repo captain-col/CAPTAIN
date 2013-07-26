@@ -4,6 +4,8 @@
 # safe.  This can be run even if CMT is installed (the tar command
 # preserves the file time).
 
+echo Installing CMT
+
 # The version of CMT that is being installed.
 CMTVERSION=v1r26
 

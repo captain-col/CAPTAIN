@@ -11,6 +11,15 @@ if [ -x /usr/bin/lsb_release ]; then
     /usr/bin/lsb_release -i -d -r -c
 fi
 
+# Print the version of git installed
+git --version
+
+# Print the version of python installed
+python --version
+
+# Print the version of cmake installed
+cmake --version
+
 # First make sure that cmt is installed.
 capt-install-cmt
 
