@@ -15,7 +15,7 @@ fi
 git --version
 
 # Print the version of python installed
-python --version
+python -V
 
 # Print the version of cmake installed
 cmake --version
