@@ -28,11 +28,11 @@ Options:
 
 Examples:
 
-    capt-install-project captain-release 
-         # Install captain-release/master/... plus all of its dependencies.
+    capt-install-package captainRelease 
+         # Install captainRelease plus all of its dependencies.
 
-    capt-install-project captain-release 1.2.3 
-         # Install captain-release/1.2.3/... plus all of its dependencies.
+    capt-install-package captainRelease 1.2.3 
+         # Install captainReelease 1.2.3 plus all of its dependencies.
 """
 
 def ClonePackage(package,version):
@@ -112,7 +112,9 @@ packageRoot = ClonePackage(repositoryName,versionTag)
 
 # Make sure all of the missing packages have been cloned.
 lastCloned=""
-while True:
+continueLooking = True
+while continueLooking:
+    continueLooking = False
     missing = cmt.GetMissing(packageRoot)
     if len(missing) < 1: break
     for package in missing:
@@ -125,6 +127,7 @@ while True:
             print "ERROR: Cannot find ", package.name
             sys.exit(1)
         lastCloned = package.name
+        continueLooking = True
         break
 
 # Configure the packages.
