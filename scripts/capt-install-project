@@ -131,7 +131,9 @@ projectRoot = os.environ["CAPT_ROOT"] +"/"+ repositoryName +"/"+ versionTag
 
 # Make sure all of the missing projects have been cloned.
 lastCloned=""
-while True:
+continueLooking = True
+while continueLooking:
+    continueLooking = False;
     missing = cmt.GetMissingProjects(projectRoot)
     if len(missing) < 1: break
     for project in missing:
@@ -139,6 +141,7 @@ while True:
         if project.name == None: continue
         if project.version == None: continue
         if project.version.find("*") >= 0: continue
+        continueLooking = True
         print "Clone missing project: ", project.name, project.version
         CloneProject(project.name,project.version)
         if lastCloned == project.name: 
