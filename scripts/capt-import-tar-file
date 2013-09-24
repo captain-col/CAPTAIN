@@ -11,20 +11,20 @@ Note that because of the conflict between the optoins for this
 script and the tar options, "OLD STYLE" tar options must be used.
 
 Usage:
-  capt-import-tar-file --tag=<version> xvzf upstream.tar.gz
-  capt-import-tar-file --tag=<version> xvjf upstream.tar.bz2
+  capt-import-tar-file -t<version> xvzf upstream.tar.gz
+  capt-import-tar-file -t<version> xvjf upstream.tar.bz2
 
 Options:
 
    -h, --help : Print this documentation.
-   -t <tag-name>, --tag=<tag-name> : Set the version tag for the upstream 
+   -t<tag-name>, --tag=<tag-name> : Set the version tag for the upstream 
               source code.  This will be added as a git tag to the imported 
               source so that it can be easily referenced.  For example,
               "get checkout <tag-name>".  See the git documentation to find 
               out everything that can be done with a tag.
-   --strip-component2=<n> : Strip this many levels from the files (see 
-              tar --strip-components for documentation).
-   --dry-run : Don't run the commands
+   -s<n>, --strip-component2=<n> : Strip this many levels from the files
+              (see  tar --strip-components for documentation).
+   -n, --dry-run : Don't run the commands
 
 EOF
 }
@@ -32,7 +32,7 @@ EOF
 # Handle the input parameters.  This is mostly copied from the getopt
 # documentation.  It relies on gnu getopt.
 
-TEMP=$(getopt -o hs:t: \
+TEMP=$(getopt -o nhs:t: \
     --long dry-run,help,strip-components:,tag: \
     -- "$@")
 
@@ -60,9 +60,9 @@ DRY=""
 
 while true; do
     case "$1" in
-	--dry-run) DRY="echo "; shift;;
-	-h|--help) usage; shift; exit 0;;
-	-t|--tag) TAG=$2; shift 2;;
+	-n| --dry-run) DRY="echo "; shift;;
+	-h| --help) usage; shift; exit 0;;
+	-t| --tag) TAG=$2; shift 2;;
 	-s| --strip-components*) STRIP=$2; shift 2;;
 	--) break;;
 	*) break;;
