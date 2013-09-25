@@ -159,3 +159,4 @@ while True:
         if not InitializeProject(project,initializedProjects,compileTarget):
             allInitialized = False
     if allInitialized: break
+

@@ -20,7 +20,7 @@ Usage:
 
 Options:
 
-   -h, --help : Print this documentation.
+   -h : Print this documentation.
 
 EOF
 }
@@ -46,31 +46,15 @@ if [ x.git != x$(git rev-parse --git-dir) ]; then
     exit 1; 
 fi
 
-# Handle the input parameters.  This is mostly copied from the getopt
-# documentation.  It relies on gnu getopt.
-
-TEMP=$(getopt -o hu:g: \
-    --long help,url-root:,git-root: \
-    -- "$@")
-
-if [ $? != 0 ]; then
-    echo
-    echo "Try '$0 --help'"
-    exit 1;
-fi
-
-eval set -- "${TEMP}"
-
-while true; do
-    case "$1" in
-	-h|--help) usage; shift; exit 0;;
-	-u|--url-root) CAPT_HTTP=$2; shift 2;;
-	-g|--git-root) CAPT_GIT=$2; shift 2;;
-	--) break;;
-	*) break;;
+while getopts "hu:g:" option; do
+    case $option in
+	h) usage; exit 0;;
+	u) CAPT_HTTP=$OPTARG;;
+	g) CAPT_GIT=$OPTARG;;
+	*) usage; exit 1;;
     esac
 done
-shift
+shift $((OPTIND-1))
 
 #####################################################################
 # Find the base directory and other "setables" for this installation,
@@ -100,7 +84,8 @@ following aliases to the login scripts to simplify CAPTAIN setup.
 sh:  alias capt-setup=". ${CAPT_ROOT}/CAPTAIN/captain.profile"
 csh: alias capt-setup "source ${CAPT_ROOT}/CAPTAIN/captain.cshrc"
 
-The environment will then be setup by running "capt-setup" If this
+These scripts make sure the capt-setup command is defined, and the
+environment will then be setup by running "capt-setup".  If this
 command is run from inside of a CAPTAIN package or project, the local
 CMT setup script (cmt/setup.sh or cmt/setup.csh) will be run.
 

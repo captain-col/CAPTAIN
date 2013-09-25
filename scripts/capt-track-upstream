@@ -21,3 +21,5 @@ if [ $# -gt 0 ]; then usage; exit 0; fi
 for r in `git rev-parse --symbolic --remotes=origin`; do
     git branch --set-upstream `basename $r` $r
 done
+
+#-*-Shell-Script-*-

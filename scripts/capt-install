@@ -32,3 +32,5 @@ source ${CAPT_ROOT}/CAPTAIN/captain.profile
 capt-install-project -c captain-release master
 
 echo Complete capt-install: $(date)
+
+#-*-Shell-Script-*-

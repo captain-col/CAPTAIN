@@ -116,3 +116,5 @@ if [ -f version.cmt ]; then git add version.cmt; fi
 echo
 echo "After adding and committing files to the local repository, use "
 echo '   "git push --all" to push the new files.'
+
+#-*-Shell-Script-*-

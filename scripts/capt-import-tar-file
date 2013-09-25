@@ -1,4 +1,4 @@
-#! /bin/dash
+#! /bin/sh
 #
 # Import a tar file for a package being tracked in a git repository.
 #
@@ -29,21 +29,6 @@ Options:
 EOF
 }
 
-# Handle the input parameters.  This is mostly copied from the getopt
-# documentation.  It relies on gnu getopt.
-
-TEMP=$(getopt -o nhs:t: \
-    --long dry-run,help,strip-components:,tag: \
-    -- "$@")
-
-if [ $? != 0 ]; then
-    echo
-    echo "Try '$0 --help'"
-    exit 1;
-fi
-
-eval set -- "${TEMP}"
-
 # Set a default value for the version tag of the source being
 # imported.  By default the version tag will not be set in the git
 # repository.
@@ -58,17 +43,16 @@ STRIP=0
 
 DRY=""
 
-while true; do
-    case "$1" in
-	-n| --dry-run) DRY="echo "; shift;;
-	-h| --help) usage; shift; exit 0;;
-	-t| --tag) TAG=$2; shift 2;;
-	-s| --strip-components*) STRIP=$2; shift 2;;
-	--) break;;
-	*) break;;
+while getopts "chs:t:" option; do
+    case $option in
+	n) DRY="echo ";;
+	h) usage; exit 0;;
+	t) TAG=$OPTARG;;
+	s) STRIP=$OPTARG;;
+	*) usage; exit 1;;
     esac
 done
-shift
+shift $((OPTIND-1))
 
 # Make sure that this is being run from the top git directory.  Exit if we
 # are not.

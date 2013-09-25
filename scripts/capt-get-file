@@ -23,43 +23,27 @@ Get a file over http.
 
 Usage:
 
-    -u, --url-root=<url-root> : The base of the URL to get the file from.  By
+    -u<url-root> : The base of the URL to get the file from.  By
                default, this is ${HTTPROOT}
-    -o, --output=<directory> : The output directory.  By default, this 
+    -o<directory> : The output directory.  By default, this 
                is ${TARROOT}
-    -c, --curl : Force using curl.
-    -w, --wget : Force using wget.
+    -c : Force using curl.
+    -w : Force using wget.
 
 EOF
 }
 
-# Handle the input parameters.  This is mostly copied from the getopt
-# documentation.  It relies on gnu getopt.
-
-TEMP=$(getopt -o cho:u:w \
-    --long curl,help,output:,url-root:,wget \
-    -- "$@")
-
-if [ $? != 0 ]; then
-    echo
-    echo "Try '$0 --help'"
-    exit 1;
-fi
-
-eval set -- "${TEMP}"
-
-while true; do
-    case "$1" in
-	-h|--help) usage; shift; exit 0;;
-	-o|--output) TARROOT=$2; shift 2;;
-	-u| --url-root) URLROOT=$2; shift 2;;
-	-c| --curl) DOWNLOADER="curl"; shift;;
-	-w| --wget) DOWNLOADER="wget"; shift;;
-	--) break;;
-	*) break;;
+while getopts "cho:u:w" option; do
+    case $option in
+	h) usage; exit 0;;
+	o) TARROOT=$OPTARG;;
+	u) URLROOT=$OPTARG;;
+	c) DOWNLOADER="curl";;
+	w) DOWNLOADER="wget";;
+	*) usage; exit 1;;
     esac
 done
-shift
+shift $((OPTIND-1))
 
 TARFILE=$1
 
@@ -101,3 +85,4 @@ case ${DOWNLOADER} in
      wget) wget -O ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE};;
 esac
 
+#-*-Shell-Script-*-
