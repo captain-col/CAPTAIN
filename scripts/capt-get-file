@@ -13,7 +13,12 @@ TARROOT=${CAPT_ROOT}/tar
 # Define the program to download files with.  The choices are "curl", or
 # "wget"
 
-DOWNLOADER="curl"
+DOWNLOADER="NoneFound"
+if [ -x /usr/bin/curl ]; then
+    DOWNLOADER="curl"
+elif [ -x /usr/bin/wget ]; then
+    DOWNLOADER="wget"
+fi
 
 usage () {
 cat <<EOF
