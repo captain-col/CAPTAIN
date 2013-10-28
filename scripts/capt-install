@@ -11,13 +11,22 @@ if [ -x /usr/bin/lsb_release ]; then
     /usr/bin/lsb_release -i -d -r -c
 fi
 
+# Print the C++ compiler installed
+echo COMPILER BEING USED.
+if [ -x /usr/bin/g++ ]; then
+    g++ -v
+fi
+
 # Print the version of git installed
+echo GIT BEING USED.
 git --version
 
 # Print the version of python installed
+echo PYTHON BEING USED.
 python -V
 
 # Print the version of cmake installed
+echo CMAKE BEING USED
 cmake --version
 
 # First make sure that cmt is installed.
