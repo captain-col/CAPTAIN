@@ -25,6 +25,7 @@ Options:
 
     -h, --help : Print this message.
     -m, --make=<target> : Run cmt broadcast make target.
+    -jN        : Set the number of jobs to run in make.
 
 Examples:
 
@@ -68,9 +69,10 @@ def InitializePackage(package,initialized):
 
 try:
     options, args = getopt.gnu_getopt(sys.argv[1:], 
-                                      "hm:",
+                                      "hm:j:",
                                       ["help",
-                                       "make="])
+                                       "make=",
+                                       "jobs="])
 except:
     usage()
     print "ERROR: Invalid option."
@@ -79,13 +81,16 @@ except:
 # If this is not None, the make target is the target to broadcast in
 # the installed package.
 makeTarget = None
+makeJobs = ""
 
 for option, value in options:
     if option == "-h" or option == "--help":
         usage()
         sys.exit(0)
     elif option == "-m" or option == "--make":
-        makeTarget=value;
+        makeTarget=value
+    elif option == "-j" or option == "--jobs":
+        makeJobs="-j"+value
     else:
         usage()
         print "ERROR: Inconceivable.  This can't happen."
@@ -140,5 +145,5 @@ shell.Shell("(cd " + packageRoot
 if makeTarget != None:
     shell.Shell("(cd " + packageRoot 
                 + "; . ./setup.sh"
-                + "; cmt broadcast make " +makeTarget+")")
+                + "; cmt broadcast make " +makeJobs+ " " +makeTarget+")")
     

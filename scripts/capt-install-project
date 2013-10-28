@@ -28,6 +28,7 @@ Options:
     -h, --help : Print this message.
     -c, --compile : Run "cmt broadcast make all"
     -m, --make=<target> : Run "cmt broadcast make <target>"
+    -jN        : Set the number of make jobs to run.
 
 Examples:
 
@@ -58,7 +59,7 @@ def CloneProject(project,version):
             print "ERROR: Cannot clone", project, version
             sys.exit(1)
 
-def InitializeProject(project,initialized,target):
+def InitializeProject(project,initialized,target,jobs):
     """Make sure that a project is initialized. This can be called
     multiple times on the same project"""
     if project.name == None: return True
@@ -75,8 +76,10 @@ def InitializeProject(project,initialized,target):
     print "    Path:     ", project.cmtpath
     compileTarget = ""
     if target != None: compileTarget = "--make=" + target
+    if jobs == None: jobs = "-j1"
     shell.Shell("(cd " + project.cmtpath 
                 + "; capt-install-package " 
+                +" "+ jobs
                 +" "+ compileTarget
                 +" "+ container.name 
                 +" "+ container.version + ")")
@@ -84,16 +87,18 @@ def InitializeProject(project,initialized,target):
 
 try:
     options, args = getopt.gnu_getopt(sys.argv[1:], 
-                                      "hcm:",
+                                      "hcm:j:",
                                       ["help",
-                                       "compile"
-                                       "make="])
+                                       "compile",
+                                       "make=",
+                                       "jobs="])
 except:
     usage()
     print "ERROR: Invalid option."
     sys.exit(1)
 
 compileTarget=None
+makeJobs="-j1"
 
 for option, value in options:
     if option == "-h" or option == "--help":
@@ -103,6 +108,8 @@ for option, value in options:
         compileTarget = "all"
     elif option == "-m" or option == "--make":
         compileTarget = value
+    elif option == "-j" or option == "--jobs":
+        makeJobs="-j"+value
     else:
         usage()
         print "ERROR: Inconceivable.  This can't happen."
@@ -152,11 +159,11 @@ while continueLooking:
 
 # Now check that all the projects are initialized.
 dependencies = cmt.GetProjects(projectRoot)
-initializedProjects = Set()
+initialized = Set()
 while True:
     allInitialized = True
     for project in dependencies:
-        if not InitializeProject(project,initializedProjects,compileTarget):
+        if not InitializeProject(project,initialized,compileTarget,makeJobs):
             allInitialized = False
     if allInitialized: break
 

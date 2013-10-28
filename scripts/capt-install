@@ -1,4 +1,14 @@
 #!/bin/bash
+#################################################################
+
+# Run the CAPTAIN installation process.  By default, this only allows
+# one make job to be run (configured in capt-install-project.  The
+# number of jobs can be set from the command line.  For example,
+#
+#  CAPT_JOBS="-j8" capt-install
+#
+# will run with 8 parallel jobs.
+
 
 echo Start capt-install: $(date)
 
@@ -38,7 +48,7 @@ source ${CAPT_ROOT}/CAPTAIN/captain.profile
 # Install the software.  This should be changed to the release package
 # eventually.  It should also take a specific version from the command
 # line.
-capt-install-project -c captain-release master
+capt-install-project ${CAPT_JOBS} -c captain-release master
 
 echo Complete capt-install: $(date)
 
