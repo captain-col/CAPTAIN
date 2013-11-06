@@ -59,10 +59,11 @@ for s in ${PWD}/setup.sh \
     fi
 done
 if [ -f ${setupfile} ]; then
+    cmt=`dirname ${setupfile}`
+    echo Clean with ${cmt}/cleanup.sh
+    . ${cmt}/cleanup.sh
     echo Setup with ${setupfile}
     . ${setupfile}
-    export cmt
-    cmt=`dirname ${setupfile}`
 else
     echo Environment configured, but specific package is not setup
 fi
