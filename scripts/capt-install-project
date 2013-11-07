@@ -47,9 +47,7 @@ def CloneProject(project,version):
     captRoot = os.environ['CAPT_ROOT']
 
     # Check if the project exists
-    if not os.path.exists(captRoot + "/" 
-                          + project 
-                          + "/" + version 
+    if not os.path.exists(captRoot + "/" + project + "/" + version 
                           + "/cmt/project.cmt"):
         # The project isn't there, so try to clone it.
         try:
@@ -58,6 +56,16 @@ def CloneProject(project,version):
         except:
             print "ERROR: Cannot clone", project, version
             sys.exit(1)
+    elif os.path.exists(captRoot + "/" + project + "/" + version 
+                        + "/.git"):
+        # The project exists and came from git.  Try to pull the
+        # latest version.
+        try:
+            shell.Shell("(cd ${CAPT_ROOT}/" + project + "/" + version + "; "
+                        + "git pull)");
+        except:
+            print "Not on a branch: This is a tagged version so don't pull."
+        
 
 def InitializeProject(project,initialized,target,jobs):
     """Make sure that a project is initialized. This can be called
@@ -70,10 +78,19 @@ def InitializeProject(project,initialized,target,jobs):
     initialized.add(project.name)
     print "Initialize Project:", project.name
     if project.cmtpath == None: return True
+    print "    Path:     ", project.cmtpath
+    # Make sure we've pulled the lastest version.
+    if os.path.exists(project.cmtpath + "/.git"):
+        # The project exists and came from git.  Try to pull the
+        # latest version.  This fails "gracefully" if we're on a
+        # detached head.
+        try:
+            shell.Shell("(cd " + project.cmtpath + "; git pull)");
+        except:
+            print "Not on a branch: This is a tagged version so don't pull."
     container = cmt.GetContainer(project.cmtpath)
     if container == None: return True
     print "    Container:", container.name, container.version
-    print "    Path:     ", project.cmtpath
     compileTarget = ""
     if target != None: compileTarget = "--make=" + target
     if jobs == None: jobs = "-j1"

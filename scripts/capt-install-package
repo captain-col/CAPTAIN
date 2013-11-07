@@ -36,6 +36,24 @@ Examples:
          # Install captainReelease 1.2.3 plus all of its dependencies.
 """
 
+def PullPackage(path):
+    """ Pull a package.  This safely runs a pull in path.  If the
+    package has not been cloned, then this exit with an error.  If the
+    path isn't a git directory, or is on a detached head, this just
+    returns (with possible "error" messages on std out."""
+
+    if not os.path.exists(path): 
+        print "ERROR: Cannot pull", path, " because package is not present"
+        sys.exit(1)
+
+    # The project exists and came from git.  Try to pull the
+    # latest version.
+    try:
+        shell.Shell("(cd " + path + "; git pull)");
+    except:
+        print "Not on a branch: This is a tagged version so don't pull."
+
+
 def ClonePackage(package,version):
     """ Clone a package.  This returns the package cmt directory
     relative to the current directory."""
@@ -45,17 +63,20 @@ def ClonePackage(package,version):
 
     # Check if the package exists
     if os.path.exists(package+ "/cmt/requirements"): 
+        PullPackage(package)
         return package + "/cmt"
-    if os.path.exists(package+"/"+version+"/cmt/requirements"):
-        return package+"/"+version+"/cmt"
 
+    if os.path.exists(package+"/"+version+"/cmt/requirements"):
+        PullPackage(package+"/"+version)
+        return package+"/"+version+"/cmt"
+    
     try:
         shell.Shell("(capt-clone " 
                     + package + " " + version + ")") 
     except:
         print "ERROR: Cannot clone", package, version
         sys.exit(1)
-
+        
     return package + "/cmt"
         
 def InitializePackage(package,initialized):
@@ -135,15 +156,22 @@ while continueLooking:
         continueLooking = True
         break
 
-# Configure the packages.
+# Configure the package.
 shell.Shell("(cd " + packageRoot 
             + "; cmt config)")
 
+# Make sure all of used packages have been pulled.
+shell.Shell("(cd " + packageRoot 
+            + "; cmt broadcast '(git pull || true)' )")
+
+# Make sure all of tghe used packages are reconfigured.
 shell.Shell("(cd " + packageRoot 
             + "; cmt broadcast cmt config)")
 
+# Make sure everything is built.
 if makeTarget != None:
     shell.Shell("(cd " + packageRoot 
+                + "; . ./cleanup.sh"
                 + "; . ./setup.sh"
                 + "; cmt broadcast make " +makeJobs+ " " +makeTarget+")")
     
