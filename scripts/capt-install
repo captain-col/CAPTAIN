@@ -9,6 +9,31 @@
 #
 # will run with 8 parallel jobs.
 
+usage () {
+    echo "usage: capt-install [release]"
+    echo "    The number of jobs can be set by using "
+    echo "         CAPT_JOBS='-jN' capt-install [release]"
+    echo "       where 'N' is the number of jobs to run"
+    echo "    [release] is an optional release name to be installed"
+    exit 0
+}
+
+# Set the default version of the installation.
+installationRelease="master"
+if [ ${#1} = 0 ]; then
+    echo "##################################################"
+    echo "#### Installing Default Release: " ${installationRelease}
+    echo "##################################################"
+elif [ ${1} == "-h" ]; then
+    usage;
+elif [ $# != 1 ]; then
+    usage;
+else
+    installationRelease=${1}
+    echo "##################################################"
+    echo "#### Installing Release: " ${installationRelease}
+    echo "##################################################"
+fi
 
 echo Start capt-install: $(date)
 
@@ -45,10 +70,8 @@ capt-install-cmt
 # Make sure that CMT is setup right for the captain environment
 source ${CAPT_ROOT}/CAPTAIN/captain.profile
 
-# Install the software.  This should be changed to the release package
-# eventually.  It should also take a specific version from the command
-# line.
-capt-install-project ${CAPT_JOBS} -c captain-release master
+# Install the software.  
+capt-install-project ${CAPT_JOBS} -c captain-release ${installationRelease}
 
 echo Complete capt-install: $(date)
 
