@@ -97,15 +97,19 @@ class Configuration():
         if self.useCMT and os.path.exists(self.toplevel+"/cmt"):
             package = cmt.GetPackage(self.toplevel + "/cmt")
             if package != None: 
+                print "Use the CMT package name", package.name
                 self.cmtPackage = True
                 self.name = package.name
             else:
                 project = cmt.GetProject(self.toplevel +"/cmt")
                 if project != None:
+                    print "Use the CMT project name", project.name
                     self.cmtProject = True
                     self.name = project.name
         else:
-            self.name = os.path.basename(toplevel)
+            print "Get the package name from the git top level", self.toplevel
+            print "   MAKE SURE YOU ARE WORKING FROM A CLEAN CMT ENVIRONMENT"
+            self.name = os.path.basename(self.toplevel)
 
 # This is a global
 config = Configuration()
