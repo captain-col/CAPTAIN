@@ -17,22 +17,27 @@ PATH=@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
 export CMTPROJECTPATH
 CMTPROJECTPATH=@@CAPTAINROOT@@
 
-# Store the root of this installation so that the capt-* scripts can use
-# figure out where they are installed. 
-export CAPT_ROOT
-CAPT_ROOT=@@CAPTAINROOT@@
+# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
+export CMTSITE
+CMTSITE="CAPTAIN"
 
-# Store the HTTP page location.
-export CAPT_HTTP
-CAPT_HTTP=@@CAPTAINHTTP@@
+# Make sure the CMTPATH variable is empty.  This prevents conflicts between
+# project dependencies.
+export CMTPATH
+CMTPATH=""
 
 # Store the GIT repository base.
 export CAPT_GIT
 CAPT_GIT=@@CAPTAINGIT@@
 
-# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
-export CMTSITE
-CMTSITE="CAPTAIN"
+# Store the HTTP page location.
+export CAPT_HTTP
+CAPT_HTTP=@@CAPTAINHTTP@@
+
+# Store the root of this installation so that the capt-* scripts can use
+# figure out where they are installed. 
+export CAPT_ROOT
+CAPT_ROOT=@@CAPTAINROOT@@
 
 # Setup CMT
 if [ ! -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then

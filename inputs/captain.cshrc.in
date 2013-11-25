@@ -22,6 +22,16 @@ rehash
 # Set the CMTPROJECTPATH
 setenv CMTPROJECTPATH @@CAPTAINROOT@@
 
+# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
+setenv CMTSITE "CAPTAIN"
+
+# Make sure the CMTPATH variable is empty.  This prevents conflicts between
+# project dependencies.
+unsetenv CMTPATH
+
+# Store the GIT repository base.
+setenv CAPT_GIT @@CAPTAINGIT@@
+
 # Store the root of this installation so that the capt-* scripts can use
 # figure out where they are installed. 
 setenv CAPT_ROOT @@CAPTAINROOT@@
@@ -29,13 +39,8 @@ setenv CAPT_ROOT @@CAPTAINROOT@@
 # Store the HTTP page location.
 setenv CAPT_HTTP @@CAPTAINHTTP@@
 
-# Store the GIT repository base.
-setenv CAPT_GIT @@CAPTAINGIT@@
-
-# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
-setenv CMTSITE "CAPTAIN"
-
 # Setup CMT
 if ( -f @@CAPTAINROOT@@/CAPTAIN/cmt.cshrc ) then
    source @@CAPTAIN@@/CAPTAIN/cmt.cshrc
 endif
+
