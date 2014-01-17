@@ -620,6 +620,7 @@ if options.dryRun:
                    "run this command with the --help option for usage "
                    "information")
 else:
-    print textwrap.fill("Don't forget to run 'git push --all --tags' to "
-                        "make this available in the upstream repository.")
+    print textwrap.fill("Don't forget to run 'git push --all'"
+                        " and 'git push --tags' to" 
+                        " make this available in the upstream repository.")
     
