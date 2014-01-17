@@ -32,8 +32,11 @@ usage = """Usage: %prog [options]
     state of the repository (i.e. it defaults to "--dry-run").
 
     To publish the newly frozen version to the upstream repository, you 
-    still need to run
-        git push --all --tags
+    still need to run the two commands:
+        git push --all
+        git push --tags
+    Before running those two commands, you can still do "git surgery"
+    without affecting other users.
 """
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-d","--dry-run",
