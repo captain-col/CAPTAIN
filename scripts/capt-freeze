@@ -489,7 +489,7 @@ def UpdateVersionHistory(name,version):
     ########################################################
     if not options.dryRun:
         # Find the right place to insert the new history message.
-        insertHere = re.match(r'^(/\*!.*)(\*/)$',history,re.DOTALL)
+        insertHere = re.match(r'^(/\*!.*)(\*/)\s*$',history,re.DOTALL)
         if not insertHere:
             sys.exit("ERROR: History file is not formatted as a block comment.")
 
