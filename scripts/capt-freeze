@@ -53,7 +53,7 @@ parser.add_option("--force-release",
                   help="Force a new release version, even if currently on an existing release branch.  Overrides the creation of a new patch.")
 parser.add_option("--force-patch",
                   action="store_true", default=False, dest="forcePatch",
-                  help="Force a new release version, even if currently on an existing release branch.  Overrides the creation of a new patch.")
+                  help="Force a new patch.")
 parser.add_option("--trace",
                   action="store_true", default=True, dest="trace",
                   help="Print commands before executing them.")
