@@ -264,13 +264,14 @@ def GetProjects(dir="."):
     _currentElement = None
     _currentName = ""
 
-    xmlOutput = captain.shell.CaptureShell("(cd " + dir 
-                                           + ";cmt show projects -xml)")
+    xmlOutput = captain.shell.CaptureShell(
+        "(cd " + dir + ";CMTPATH='' cmt show projects -xml)")
     parser.Parse(xmlOutput[0])
     return _currentElement
 
 def GetContainer(dir="."):
-    out = captain.shell.CaptureShell("(cd " + dir + ";cmt show container)")
+    out = captain.shell.CaptureShell(
+        "(cd " + dir + ";CMTPATH='' cmt show container)")
     container = Package()
     # Check for warning messages.
     for line in out[1].splitlines():
@@ -310,14 +311,15 @@ def GetUses(dir="."):
     _currentName = ""
 
     xmlOutput = captain.shell.CaptureShell("(cd " + dir 
-                                           + ";cmt show uses -xml)")
+                                           + ";CMTPATH='' cmt show uses -xml)")
     parser.Parse(xmlOutput[0])
     return _currentElement
 
 def GetMissing(dir="."):
     """Get a list of the missing packages used by the present one"""
 
-    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show uses)")
+    output = captain.shell.CaptureShell("(cd " + dir
+                                        + ";CMTPATH='' cmt show uses)")
 
     missingList = []
     for line in output[1].splitlines():
@@ -337,7 +339,8 @@ def GetMissing(dir="."):
 def GetMissingProjects(dir="."):
     """Get a list of the missing packages used by the present one"""
 
-    output = captain.shell.CaptureShell("(cd " + dir + ";cmt show projects)")
+    output = captain.shell.CaptureShell("(cd " + dir
+                                        + ";CMTPATH='' cmt show projects)")
 
     missingList = []
     for line in output[1].splitlines():
@@ -399,5 +402,8 @@ def CheckCMT():
     except:
         foundVersion = False
 
+    if not foundVersion:
+        print "WARNING: CMT not available"
+        
     return foundVersion
 

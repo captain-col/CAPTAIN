@@ -158,19 +158,19 @@ while continueLooking:
 
 # Configure the package.
 shell.Shell("(cd " + packageRoot 
-            + "; cmt config)")
+            + "; CMTPATH='' cmt config)")
 
 # Make sure all of used packages have been pulled.
 shell.Shell("(cd " + packageRoot 
-            + "; cmt broadcast '(git pull || true)' )")
+            + "; CMTPATH='' cmt broadcast '(git pull || true)' )")
 
 # Make sure all of tghe used packages are reconfigured.
 shell.Shell("(cd " + packageRoot 
-            + "; cmt broadcast cmt config)")
+            + "; CMTPATH='' cmt broadcast cmt config)")
 
 # Make sure everything is built.
 if makeTarget != None:
-    shell.Shell("(cd " + packageRoot 
+    shell.Shell("(cd " + packageRoot + "; CMTPATH=''"
                 + "; . ./cleanup.sh"
                 + "; . ./setup.sh"
                 + "; cmt broadcast make " +makeJobs+ " " +makeTarget+")")

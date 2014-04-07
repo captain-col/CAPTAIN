@@ -179,6 +179,9 @@ dependencies = cmt.GetProjects(projectRoot)
 initialized = Set()
 while True:
     allInitialized = True
+    if not dependencies:
+        print "WARNING: There are no dependencies, not even the target project"
+        break
     for project in dependencies:
         if not InitializeProject(project,initialized,compileTarget,makeJobs):
             allInitialized = False
