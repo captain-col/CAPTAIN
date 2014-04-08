@@ -26,6 +26,9 @@ capt-get-file ${CMTSOURCE}
 # Unpack the tar file.
 tar xzf tar/${CMTSOURCE}
 
+# DEBUG THE AFFAIR.
+set -x 
+
 # Configure CMT
 cd CMT/${CMTVERSION}/mgr
 /bin/sh INSTALL
