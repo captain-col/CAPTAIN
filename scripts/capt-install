@@ -49,20 +49,20 @@ fi
 # Print the C++ compiler installed
 echo COMPILER BEING USED.
 if [ -x /usr/bin/g++ ]; then
-    g++ -v
+    g++ -v 2>&1
 fi
 
 # Print the version of git installed
 echo GIT BEING USED.
-git --version
+git --version 2>&1
 
 # Print the version of python installed
 echo PYTHON BEING USED.
-python -V
+python -V 2>&1
 
 # Print the version of cmake installed
 echo CMAKE BEING USED
-cmake --version
+cmake --version 2>&1
 
 # First make sure that cmt is installed.
 capt-install-cmt
