@@ -47,6 +47,12 @@ fi
 
 . @@CAPTAINROOT@@/CAPTAIN/cmt.profile
 
+if ! which cmt; then
+   rm @@CAPTAINROOT@@/CAPTAIN/cmt.profile
+   echo CMT not installed.
+   exit 1
+fi
+
 echo Setup CMT version `cmt version` with CMTSITE set to ${CMTSITE}
 
 # Now source the setup file for the current package.
