@@ -30,14 +30,16 @@ tar xzf tar/${CMTSOURCE}
 cd CMT/${CMTVERSION}/mgr
 /bin/sh INSTALL
 
-# Copy the setup files into the CAPTAIN area so that the captain.profile
-# can source them.
-cp setup.sh ${CAPT_ROOT}/CAPTAIN/cmt.profile
-cp setup.csh ${CAPT_ROOT}/CAPTAIN/cmt.cshrc
-
 # Setup and build  CMT.
 source ./setup.sh
 make
+
+# Copy the setup files into the CAPTAIN area so that the captain.profile
+# can source them.
+if which cmt; then
+    cp setup.sh ${CAPT_ROOT}/CAPTAIN/cmt.profile
+    cp setup.csh ${CAPT_ROOT}/CAPTAIN/cmt.cshrc
+fi
 
 ##################################################
 

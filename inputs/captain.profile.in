@@ -50,7 +50,7 @@ fi
 if ! which cmt; then
    rm @@CAPTAINROOT@@/CAPTAIN/cmt.profile
    echo CMT not installed.
-   exit 1
+   return 
 fi
 
 echo Setup CMT version `cmt version` with CMTSITE set to ${CMTSITE}
