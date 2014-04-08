@@ -35,13 +35,17 @@ cd CMT/${CMTVERSION}/mgr
 
 # Setup and build  CMT.
 source ./setup.sh
-make
+
+make VERBOSE=1
 
 # Copy the setup files into the CAPTAIN area so that the captain.profile
 # can source them.
-if which cmt; then
+if which cmt.exe; then
     cp setup.sh ${CAPT_ROOT}/CAPTAIN/cmt.profile
     cp setup.csh ${CAPT_ROOT}/CAPTAIN/cmt.cshrc
+else
+    echo CMT NOT CORRECTLY BUILT
+    exit 1
 fi
 
 ##################################################
