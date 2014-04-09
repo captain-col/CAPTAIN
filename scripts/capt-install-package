@@ -173,5 +173,8 @@ if makeTarget != None:
     shell.Shell("(cd " + packageRoot + "; CMTPATH=''"
                 + "; . ./cleanup.sh"
                 + "; . ./setup.sh"
-                + "; cmt broadcast make VERBOSE=1 " +makeJobs+ " " +makeTarget+")")
+                + "; cmt broadcast "
+                + "'(make VERBOSE=1 -k " + makeJobs+ " " + makeTarget
+                + " || true)'"
+                + " )")
     
