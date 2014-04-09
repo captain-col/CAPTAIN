@@ -26,9 +26,6 @@ capt-get-file ${CMTSOURCE}
 # Unpack the tar file.
 tar xzf tar/${CMTSOURCE}
 
-# DEBUG THE AFFAIR.
-set -x 
-
 # Configure CMT
 cd CMT/${CMTVERSION}/mgr
 /bin/sh INSTALL
@@ -36,7 +33,7 @@ cd CMT/${CMTVERSION}/mgr
 # Setup and build  CMT.
 source ./setup.sh
 
-make VERBOSE=1
+make -j1 VERBOSE=1
 
 # Copy the setup files into the CAPTAIN area so that the captain.profile
 # can source them.
