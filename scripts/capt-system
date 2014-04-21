@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Print the code name for the current system.  This is suitable for
+# setting the CMTCONFIG variable.
+
+# Use uname to set some defaults.  uname is OK for the OS and
+# processor, but does a pretty bad job at the variant and release.
+# This converts "-" to "_" because the "-" is used as a delimiter.
+os=$(uname | tr '-' '_')
+variant=$(uname -v | tr '-' '_')
+release=$(uname -r | tr '-' '_')
+processor=$(uname -m | tr '-' '_')
+
+# If the system provides the linux standard base, then query the
+# variant and release of the system.
+if [ -x /usr/bin/lsb_release ]; then
+    variant=$(/usr/bin/lsb_release -s -i)
+    release=$(/usr/bin/lsb_release -s -r)
+fi
+
+# Form the system name, and get rid of invalid characters.
+echo "${os}-${variant}-${release}-${processor}" | tr '/ #()' '._...'
