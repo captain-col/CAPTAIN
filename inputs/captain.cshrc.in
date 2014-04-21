@@ -41,6 +41,6 @@ setenv CAPT_HTTP @@CAPTAINHTTP@@
 
 # Setup CMT
 if ( -f @@CAPTAINROOT@@/CAPTAIN/cmt.cshrc ) then
-   source @@CAPTAIN@@/CAPTAIN/cmt.cshrc
+   source @@CAPTAINROOT@@/CAPTAIN/cmt.cshrc
 endif
 
