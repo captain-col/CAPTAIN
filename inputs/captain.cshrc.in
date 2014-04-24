@@ -19,16 +19,6 @@ setenv PATH `echo $PATH | sed "s,:*.*CAPTAIN/scripts:\+,,"`
 setenv PATH @@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
 rehash
 
-# Set the CMTPROJECTPATH
-setenv CMTPROJECTPATH @@CAPTAINROOT@@
-
-# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
-setenv CMTSITE "CAPTAIN"
-
-# Make sure the CMTPATH variable is empty.  This prevents conflicts between
-# project dependencies.
-unsetenv CMTPATH
-
 # Store the GIT repository base.
 setenv CAPT_GIT @@CAPTAINGIT@@
 
@@ -39,8 +29,44 @@ setenv CAPT_ROOT @@CAPTAINROOT@@
 # Store the HTTP page location.
 setenv CAPT_HTTP @@CAPTAINHTTP@@
 
+# Set the CMTPROJECTPATH
+setenv CMTPROJECTPATH @@CAPTAINROOT@@
+
+# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
+setenv CMTSITE "CAPTAIN"
+
+# Set the CMT configuration variable to be a bit more specific than the CMT
+# default value.
+setenv CMTCONFIG `capt-system`
+
+# Make sure the CMTPATH variable is empty.  This prevents conflicts between
+# project dependencies.
+unsetenv CMTPATH
+
 # Setup CMT
 if ( -f @@CAPTAINROOT@@/CAPTAIN/cmt.cshrc ) then
    source @@CAPTAINROOT@@/CAPTAIN/cmt.cshrc
 endif
 
+# Now source the setup file for the current package.
+set setupfile="/no/such/file"
+foreach s ( ${PWD}/setup.sh \
+    ${PWD}/cmt/setup.sh \
+    ${PWD}/../cmt/setup.sh \
+    ${PWD}/../../cmt/setup.sh \
+    ${PWD}/../../../cmt/setup.sh \
+    ${PWD}/../../../../cmt/setup.sh \
+    ${PWD}/../../../../../cmt/setup.sh )
+    if ( -f ${s} ) then
+        set setupfile=${s}
+    endif
+end
+if ( -f ${setupfile} ) then
+    set cmt=`dirname ${setupfile}`
+    echo Clean with ${cmt}/cleanup.sh
+    source ${cmt}/cleanup.sh
+    echo Setup with ${setupfile}
+    source ${setupfile}
+else
+    echo Environment configured, but specific package is not setup
+endif
