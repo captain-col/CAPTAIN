@@ -13,19 +13,6 @@ alias capt-setup=". @@CAPTAINROOT@@/CAPTAIN/captain.profile"
 PATH=$(echo $PATH | sed "s,:*.*CAPTAIN/scripts:\+,,")
 PATH=@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
 
-# Set the CMTPROJECTPATH
-export CMTPROJECTPATH
-CMTPROJECTPATH=@@CAPTAINROOT@@
-
-# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
-export CMTSITE
-CMTSITE="CAPTAIN"
-
-# Make sure the CMTPATH variable is empty.  This prevents conflicts between
-# project dependencies.
-export CMTPATH
-CMTPATH=""
-
 # Store the GIT repository base.
 export CAPT_GIT
 CAPT_GIT=@@CAPTAINGIT@@
@@ -38,6 +25,24 @@ CAPT_HTTP=@@CAPTAINHTTP@@
 # figure out where they are installed. 
 export CAPT_ROOT
 CAPT_ROOT=@@CAPTAINROOT@@
+
+# Set the CMTPROJECTPATH
+export CMTPROJECTPATH
+CMTPROJECTPATH=@@CAPTAINROOT@@
+
+# Set the CMTSITE tag so that we select any CAPTAIN specific CMT macros
+export CMTSITE
+CMTSITE="CAPTAIN"
+
+# Set the CMT configuration variable to be a bit more specific than the CMT
+# default value.
+export CMTCONFIG
+CMTCONFIG=$(capt-system)
+
+# Make sure the CMTPATH variable is empty.  This prevents conflicts between
+# project dependencies.
+export CMTPATH
+CMTPATH=""
 
 # Setup CMT
 if [ ! -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
