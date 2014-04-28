@@ -52,7 +52,7 @@ fi
 
 . @@CAPTAINROOT@@/CAPTAIN/cmt.profile
 
-if ! which cmt; then
+if ! which cmt >> /dev/null ; then
    rm @@CAPTAINROOT@@/CAPTAIN/cmt.profile
    echo CMT not installed.
    return 
