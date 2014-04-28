@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# Build the CAPTAIN software in the mcgrew account on pdsf.nersc.gov.
+
+# This for committing to qsub using the SGE queue system.
+
+# Set the qsub option to run in the current working directory.
+#$ -cwd
+
+# Set the qsub option to Join the standard output and error streams.
+#$ -j yes
+
+# Send mail to me!
+#$ -M mcgrew
+
+# Send mail at the beginning and end of the job.
+#$ -m be
+
+# Add the system name to the log file.
+uname -a
+
+# Make this look like an interactive login...
+. ${HOME}/.bash_profile
+. ${HOME}/.bashrc
+. ${HOME}/.bashrc.ext
+
+# Set the area to build the software.  This lets the build area be
+# moved around.
+BUILD_AREA=/project/projectdirs/captain/releases
+
+# Make sure that the build area exists.
+if [ ! -d ${BUILD_AREA} ]; then
+    mkdir -p ${BUILD_AREA}
+fi
+cd ${BUILD_AREA}
+
+# Make sure that the CAPTAIN support area exists.
+if [ ! -d CAPTAIN ]; then
+    git clone http://nngroup.physics.sunysb.edu/captain/repo/CAPTAIN.git
+    cd ${BUILD_AREA}/CAPTAIN
+    ./configure.sh
+else
+    cd ${BUILD_AREA}/CAPTAIN
+    git pull
+    ./configure.sh
+fi
+
+# Set up and clean up the environment.
+source ${BUILD_AREA}/CAPTAIN/captain.profile
+
+cd ${BUILD_AREA}
+
+# Build the CAPTAIN software.
+capt-install
+
+# end of script
