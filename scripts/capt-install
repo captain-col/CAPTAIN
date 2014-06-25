@@ -82,7 +82,7 @@ fi
 
 
 # First make sure that cmt is installed.
-capt-install-cmt
+capt-install-cmt || (echo CMT Command Installation failed; exit 1)
 
 # Make sure that CMT is setup right for the captain environment
 source ${CAPT_ROOT}/CAPTAIN/captain.profile

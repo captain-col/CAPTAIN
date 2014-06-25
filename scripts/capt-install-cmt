@@ -21,7 +21,7 @@ CMTSOURCE=CMT${CMTVERSION}.tar.gz
 cd ${CAPT_ROOT}
 
 # Get the file from the tar file web page.
-capt-get-file ${CMTSOURCE}
+capt-get-file ${CMTSOURCE} || (echo Failed to download CMT source; exit 1)
 
 # Unpack the tar file.
 tar xzf tar/${CMTSOURCE}
