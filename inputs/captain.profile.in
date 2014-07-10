@@ -10,7 +10,7 @@ alias capt-setup=". @@CAPTAINROOT@@/CAPTAIN/captain.profile"
 
 # Make sure that other versions of the CAPTAIN scripts directory is removed
 # from the path. 
-PATH=$(echo $PATH | sed "s,:*[^:]*/CAPTAIN/scripts:\+,,g")
+PATH=$(echo $PATH | sed 's,:*[^:]*/CAPTAIN/scripts:\+,:,g')
 PATH=@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
 
 # Store the GIT repository base.
