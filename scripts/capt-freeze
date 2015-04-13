@@ -75,7 +75,7 @@ parser.add_option("--skip-remote-check",
                   help="Skip checking the exists of a remote origin. This allows freezing to proceed even if there isn't a remote repository.  Proceed with extreme caution.")
 parser.add_option("--skip-ahead-check",
                   action="store_true", default=False, dest="skipAheadCheck",
-                  help="Skip the repository status check. This allows freezing to proceed even if the local repository is not at a branch HEAD, or not synchronized with the remote repository.  Proceed with extreme caution.")
+                  help="Skip the repository status check. This allows freezing to proceed even if the local repository is not at a branch HEAD, or not synchronized with the remote repository.  This can be used to freeze when there isn't network access.  Proceed with extreme caution.")
 parser.add_option("--skip-modified-check",
                   action="store_true", default=False, dest="skipModifiedCheck",
                   help="Skip checking that all modified files are committed to the local repository.  Proceed with extreme caution.")
