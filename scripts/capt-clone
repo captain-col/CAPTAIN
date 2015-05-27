@@ -46,26 +46,24 @@ Options:
 
     -h, --help : Print this message.
 
-Examples (with fictitious names)
+Examples (with semi-fictitious names)
 
   A project:
-
     capt-clone LCGCMT            # clone into LCGCMT/master/...
     capt-clone LCGCMT 1.2.3      # clone into LCGCMT/1.2.3/...
 
   A package:
- 
     capt-clone captPolicy        # clone into captPolicy
     capt-clone captPolicy  v1.2  # clone and then "git checkout v1.2"
 
   A package with an offset:
-
     capt-clone calib/captCal     # clone into calib/captCal w/ version "master"
 
-  A plain vanilla git repository
-
+  A plain vanilla git repositoryL
     capt-clone CAPTAIN           # clone into CAPTAIN (just like "git clone")
-  
+
+  You can override the remote origin using:
+    CAPT_GIT="someplace@your.remote.machine.org:" capt-clone <package>
 """
 
 import os
