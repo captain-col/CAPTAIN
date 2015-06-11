@@ -88,7 +88,8 @@ fi
 case ${DOWNLOADER} in
      curl) curl -o ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE} \
 	 || (echo Download of ${TARFILE} failed; exit 1);;
-     wget) wget -O ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE} \
+     wget) echo wget -v -O ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE}; \
+	 wget -v -O ${TARROOT}/${TARFILE} ${HTTPROOT}/${TARFILE} \
 	 || (echo Download of ${TARFILE} failed; exit 1);;
 esac
 
