@@ -111,8 +111,21 @@ repositoryName = args[0]
 versionTag = "master"
 if len(args) > 1: versionTag=args[1]
 
-print "Clone:   ", repositoryName
-print "Version: ", versionTag
+print "Clone:       ", repositoryName
+print "Version:     ", versionTag
+
+fullRepoName = repositoryName
+if fullRepoName[-4:] != ".git": fullRepoName += ".git"
+
+# Print a warning if this is a clone of an http repo since commits won't work.
+remoteRepository = os.environ["CAPT_GIT"] + fullRepoName
+print "Remote Repo: ", remoteRepository
+
+if remoteRepository[0:4] == "http":
+    print " "
+    print "WARNING: Using http clone so git-push is disabled.  You need ssh"
+    print "WARNING: access to enable push."
+    print " "
 
 # Check to see that there isn't anything in the way of the clone.  If
 # there is something in the way, this is going to exit.
@@ -158,9 +171,6 @@ tempRepo = tempfile.mktemp(dir="",prefix="git_")
 #
 # result = shell.Shell("git clone ${CAPT_GIT}" + repositoryName
 #                              + " " + tempRepo)
-
-fullRepoName = repositoryName
-if fullRepoName[-4:] != ".git": fullRepoName += ".git"
 
 try:
     shell.Shell("mkdir " + tempRepo)
