@@ -14,10 +14,10 @@ TARROOT=${CAPT_ROOT}/tar
 # "wget"
 
 DOWNLOADER="NoneFound"
-if [ -x /usr/bin/curl ]; then
-    DOWNLOADER="curl"
-elif [ -x /usr/bin/wget ]; then
+if [ -x /usr/bin/wget ]; then
     DOWNLOADER="wget"
+elif [ -x /usr/bin/curl ]; then
+    DOWNLOADER="curl"
 fi
 
 usage () {
