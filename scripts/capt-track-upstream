@@ -19,7 +19,10 @@ EOF
 if [ $# -gt 0 ]; then usage; exit 0; fi
 
 for r in `git rev-parse --symbolic --remotes=origin`; do
-    git branch --set-upstream `basename $r` $r
+    if ! git branch --set-upstream-to origin/$(basename $r) $(basename $r);
+    then
+	git branch --set-upstream `basename $r` $r
+    fi
 done
 
 #-*-Shell-Script-*-
