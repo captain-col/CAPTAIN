@@ -59,7 +59,7 @@ Examples (with semi-fictitious names)
   A package with an offset:
     capt-clone calib/captCal     # clone into calib/captCal w/ version "master"
 
-  A plain vanilla git repositoryL
+  A plain vanilla git repository:
     capt-clone CAPTAIN           # clone into CAPTAIN (just like "git clone")
 
   You can override the remote origin using:
@@ -123,8 +123,8 @@ print "Remote Repo: ", remoteRepository
 
 if remoteRepository[0:4] == "http":
     print " "
-    print "WARNING: Using http clone so git-push is disabled.  You need ssh"
-    print "WARNING: access to enable push."
+    print "WARNING: Using http clone so git-push is disabled.  You need write"
+    print "WARNING: access (usually with ssh) to enable push."
     print " "
 
 # Check to see that there isn't anything in the way of the clone.  If
