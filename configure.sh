@@ -71,6 +71,36 @@ for input in inputs/*.in; do
 	> $output
 done
 
+if [ "x${CAPTAIN_CPP_COMPILER}" != "x" ]; then
+    echo User selected C++ compiler: $(which ${CAPTAIN_CPP_COMPILER})
+    ln -sf $(which $CAPTAIN_CPP_COMPILER) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+else
+    # Set the default c++ compiler for this installation.  This should be
+    # changed to reflect the preferred compilers.
+    for vers in g++-4.9 g++-4.8 g++-5 g++-4.7 g++; do
+	if which $vers; then
+	    echo Choosing default C++ compiler: $(which $vers)
+	    ln -sf $(which $vers) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+	    break;
+	fi
+    done
+fi
+
+if [ "x${CAPTAIN_CC_COMPILER}" != "x" ]; then
+    echo User selected C++ compiler: $(which ${CAPTAIN_CC_COMPILER})
+    ln -sf $(which $CAPTAIN_CC_COMPILER) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+else
+    # Set the default c++ compiler for this installation.  This should be
+    # changed to reflect the preferred compilers.
+    for vers in gcc-4.9 gcc-4.8 gcc-5 gcc-4.7 gcc; do
+	if which $vers; then
+	    echo Choosing default C++ compiler: $(which $vers)
+	    ln -sf $(which $vers) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+	    break;
+	fi
+    done
+fi
+
 cat <<EOF
 
 Setup files named 
