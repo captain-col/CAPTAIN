@@ -74,6 +74,7 @@ done
 if [ "x${CAPTAIN_CPP_COMPILER}" != "x" ]; then
     echo User selected C++ compiler: $(which ${CAPTAIN_CPP_COMPILER})
     ln -sf $(which $CAPTAIN_CPP_COMPILER) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+    ln -sf $(which $CAPTAIN_CPP_COMPILER) ${CAPT_ROOT}/CAPTAIN/scripts/c++
 else
     # Set the default c++ compiler for this installation.  This should be
     # changed to reflect the preferred compilers.
@@ -81,6 +82,7 @@ else
 	if which $vers; then
 	    echo Choosing default C++ compiler: $(which $vers)
 	    ln -sf $(which $vers) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+	    ln -sf $(which $vers) ${CAPT_ROOT}/CAPTAIN/scripts/c++
 	    break;
 	fi
     done
@@ -88,14 +90,16 @@ fi
 
 if [ "x${CAPTAIN_CC_COMPILER}" != "x" ]; then
     echo User selected C++ compiler: $(which ${CAPTAIN_CC_COMPILER})
-    ln -sf $(which $CAPTAIN_CC_COMPILER) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+    ln -sf $(which $CAPTAIN_CC_COMPILER) ${CAPT_ROOT}/CAPTAIN/scripts/gcc
+    ln -sf $(which $CAPTAIN_CC_COMPILER) ${CAPT_ROOT}/CAPTAIN/scripts/cc
 else
-    # Set the default c++ compiler for this installation.  This should be
+    # Set the default C compiler for this installation.  This should be
     # changed to reflect the preferred compilers.
     for vers in gcc-4.9 gcc-4.8 gcc-5 gcc-4.7 gcc; do
 	if which $vers; then
 	    echo Choosing default C++ compiler: $(which $vers)
-	    ln -sf $(which $vers) ${CAPT_ROOT}/CAPTAIN/scripts/g++
+	    ln -sf $(which $vers) ${CAPT_ROOT}/CAPTAIN/scripts/gcc
+	    ln -sf $(which $vers) ${CAPT_ROOT}/CAPTAIN/scripts/cc
 	    break;
 	fi
     done
