@@ -19,7 +19,7 @@ usage () {
 }
 
 # Set the default version of the installation.
-installationRelease="0.0.2"
+installationRelease="master"
 if [ ${#1} = 0 ]; then
     echo "##################################################"
     echo "#### Installing Default Release: " ${installationRelease}
