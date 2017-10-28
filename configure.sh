@@ -4,7 +4,6 @@
 # rewrites input templates with installation specific values.
 #
 
-
 usage () {
     cat <<EOF
 
@@ -66,9 +65,9 @@ for input in inputs/*.in; do
     echo "Write $output from $input"
     cat $input | \
 	sed "s-@@CAPTAINHTTP@@-${CAPT_HTTP}-" | \
-	sed "s-@@CAPTAINGIT@@-${CAPT_GIT}-" | \
-	sed "s:@@CAPTAINROOT@@:${CAPT_ROOT}:g" \
-	> $output
+	sed "s^@@CAPTAINGIT@@^${CAPT_GIT}^" | \
+	sed "s:@@CAPTAINROOT@@:${CAPT_ROOT}:g" | \
+	cat > $output
 done
 
 if [ "x${CAPTAIN_CPP_COMPILER}" != "x" ]; then
