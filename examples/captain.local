@@ -1,0 +1,17 @@
+# A setup file to be modified for the local environment.
+#
+# PLEASE DO NOT COMMIT YOUR LOCAL VERSION!
+#
+
+#####################################################
+# This is a local template for you to modify.
+#####################################################
+
+echo Hello World
+
+#####################################################
+# The last lines of the file!
+#####################################################
+
+
+

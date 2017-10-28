@@ -13,11 +13,9 @@ alias capt-setup=". @@CAPTAINROOT@@/CAPTAIN/captain.profile"
 PATH=$(echo ${PATH} | sed s://:/:g)
 
 # Make sure that other versions of the CAPTAIN scripts directory is removed
-# from the path. 
+# from the path.  Then add the scripts directory to the newly stripped path.
 PATH=$(echo ${PATH} | sed 's,:*[^:]*/CAPTAIN/scripts:\+,:,g')
 PATH=@@CAPTAINROOT@@/CAPTAIN/scripts:${PATH}
-
-
 
 # Store the GIT repository base.
 export CAPT_GIT
@@ -49,6 +47,13 @@ CMTCONFIG=$(capt-system)
 # project dependencies.
 export CMTPATH
 CMTPATH=""
+
+# Apply any local configurations.  The local configurations are placed in
+#  the ${CAPT_ROOT}/CAPTAIN/captain.local file.
+if [ -f @@CAPTAINROOT@@/CAPTAIN/captain.local ]; then
+   echo Apply local captain configuration
+   . @@CAPTAINROOT@@/CAPTAIN/captain.local
+fi
 
 # Setup CMT
 if [ ! -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
