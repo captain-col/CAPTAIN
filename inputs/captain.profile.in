@@ -48,28 +48,21 @@ CMTCONFIG=$(capt-system)
 export CMTPATH
 CMTPATH=""
 
-# Apply any local configurations.  The local configurations are placed in
-#  the ${CAPT_ROOT}/CAPTAIN/captain.local file.
-if [ -f @@CAPTAINROOT@@/CAPTAIN/captain.local ]; then
-   echo Apply local captain configuration
-   . @@CAPTAINROOT@@/CAPTAIN/captain.local
-fi
-
 # Setup CMT
-if [ ! -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
+if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
+   . @@CAPTAINROOT@@/CAPTAIN/cmt.profile
+else
    echo CMT not setup.
-   return 
 fi
-
-. @@CAPTAINROOT@@/CAPTAIN/cmt.profile
 
 if ! which cmt >> /dev/null ; then
-   rm @@CAPTAINROOT@@/CAPTAIN/cmt.profile
-   echo CMT not installed.
-   return 
+    if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
+	rm @@CAPTAINROOT@@/CAPTAIN/cmt.profile
+    fi
+    echo CMT not installed
+else
+    echo Setup CMT version `cmt version` with CMTSITE set to ${CMTSITE}
 fi
-
-echo Setup CMT version `cmt version` with CMTSITE set to ${CMTSITE}
 
 # Now source the setup file for the current package.
 setupfile="/no/such/file"
@@ -87,12 +80,21 @@ for s in ${PWD}/setup.sh \
 done
 if [ -f ${setupfile} ]; then
     cmt=`dirname ${setupfile}`
-    echo Clean with ${cmt}/cleanup.sh
-    . ${cmt}/cleanup.sh
-    echo Setup with ${setupfile}
-    . ${setupfile}
+    if which cmt >> /dev/null; then
+	echo Clean with ${cmt}/cleanup.sh
+	. ${cmt}/cleanup.sh
+	echo Setup with ${setupfile}
+	. ${setupfile}
+    fi
 else
     echo Environment configured, but specific package is not setup
+fi
+
+# Apply any local configurations.  The local configurations are placed in
+#  the ${CAPT_ROOT}/CAPTAIN/captain.local file.
+if [ -f @@CAPTAINROOT@@/CAPTAIN/captain.local ]; then
+    echo Apply local captain configuration
+    . @@CAPTAINROOT@@/CAPTAIN/captain.local
 fi
 
 #########################################################################
