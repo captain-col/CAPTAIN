@@ -1,8 +1,12 @@
 #!/bin/bash
 # The resulting captain/LCGCMT sets up a image that can be used to
 # build a CAPTAIN user image.  It defines three mount points that can
-# be set using udocker.  See the docker-CAPTAIN.sh script to see how
-# this is used.  The CAPTAIN software is installed in /home/captain.
+# be set using udocker.  The script should be executed as root or with sudo
+#
+#  sudo ./docker-LCGCMT.sh
+#
+# See the docker-CAPTAIN.sh script to see how this is used.  The
+# CAPTAIN software is installed in /home/captain.
 #
 # The user environment should be setup using
 #

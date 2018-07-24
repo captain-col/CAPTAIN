@@ -1,9 +1,13 @@
 #!/bin/bash
 #
 # This builds a docker container (using save) that can be imported
-# into udocker using "udocker load -i captainRelease.tar".  The
-# resulting container defines three mount points that can be set using
-# udocker
+# into udocker using "udocker load -i captainRelease.tar".  The script
+# should be executed as root or with sudo
+#
+#  sudo ./docker-CAPTAIN.sh
+#
+# The resulting container defines three mount points that can be set
+# using udocker
 #
 # /home/work -- This is suppose to be pointed at whereever you have
 # the script you want to run.  My intention is that you will create a
