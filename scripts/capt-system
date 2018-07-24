@@ -16,7 +16,13 @@ compiler="unknown"
 # variant and release of the system.
 if [ -x /usr/bin/lsb_release ]; then
     variant=$(/usr/bin/lsb_release -s -i)
-    release=$(/usr/bin/lsb_release -s -r)
+    if false; then
+	# Only take the major release (up to the first ".")
+	release=$(/usr/bin/lsb_release -s -r | sed s/\\..*//)
+    else
+	# Only take the full release
+	release=$(/usr/bin/lsb_release -s -r)
+    fi
 fi
 
 if which gcc >> /dev/null; then
