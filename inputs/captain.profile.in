@@ -55,6 +55,13 @@ else
    echo CMT not setup.
 fi
 
+# Apply any local preconfigurations.  The local configurations are placed in
+#  the ${CAPT_ROOT}/CAPTAIN/captain.prelocal file.
+if [ -f @@CAPTAINROOT@@/CAPTAIN/captain.local ]; then
+    echo Apply local captain preconfiguration
+    . @@CAPTAINROOT@@/CAPTAIN/captain.prelocal
+fi
+
 if ! which cmt >> /dev/null ; then
     if [ -f @@CAPTAINROOT@@/CAPTAIN/cmt.profile ]; then
 	rm @@CAPTAINROOT@@/CAPTAIN/cmt.profile
