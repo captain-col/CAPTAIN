@@ -27,6 +27,9 @@
 # "mounted".  It should be attached to a directory where the output
 # will go.
 #
+# /home/user -- This provides a mount point for where you can attach
+# your home directory for debugging.  It should usually be left unattached.
+# 
 # Using udocker, and assuming a script that will create the project
 # area in /home/work, the running will be:
 #

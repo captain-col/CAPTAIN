@@ -32,6 +32,14 @@
 # "mounted".  It should be attached to a directory where the output
 # will go.
 #
+# /home/user -- This provides a mount point for where you can attach
+# your home directory for debugging.  It should usually be left unattached.
+#
+# If you are using udocker, you can attached directories to the mount
+# points as follows.
+#
+#   udocker run -v ${HOME}:/home/user captain/lcgcmt
+#
 docker image build -t captain/lcgcmt - <<EOF
 ######################################################################
 # Build a CAPTAIN LCGCMT working environment to run batch jobs.
@@ -45,10 +53,12 @@ RUN apt-get update && apt-get install -y \
    bash \
    binutils \
    curl \
+   emacs-nox \
    gcc \
    g++ \
    gfortran \
    git \
+   lsb-release \
    make \
    nano
 
@@ -76,14 +86,24 @@ RUN apt-get update && apt-get install -y \
     python-dev \
     xlibmesa-glu-dev
 
-# Create the captain user and the directorys that will be attached to
-#  external locations. 
+# Create the captain user
 RUN adduser --disabled-password --gecos ""  captain 
+
+# Create a directory that can be attached to the users work directory.
+#  This is expected to be the directory in which the job is going to run.
 RUN mkdir /home/work; chown captain:captain /home/work
+
+# Create a directory to be attached to the location of the input data.
 RUN mkdir /home/data; chown captain:captain /home/data
+
+# Create a directory to be attached to where the output data should be written.
 RUN mkdir /home/output; chown captain:captain /home/output
 
-# Change the working user to captain and the working directory 
+# Create a directory that can be attached to the users home directory.
+#  This should probably not be attached in most circumstances.
+RUN mkdir /home/user; chown captain:captain /home/user
+
+# Change the working user to captain, and set the main image directory.
 USER captain
 WORKDIR /home/captain
 
