@@ -16,7 +16,7 @@
 # to install it using
 #
 # udocker load -i captainRelease.tar
-# udocker run --name="captain_180802" captain/release:latest
+# udocker run --name="captainRelease_180822" captain/release:latest
 #
 # You can choose any container name you want.  I suggest that you
 # check the udocker documentation for more information.
@@ -31,7 +31,7 @@
 
 # The run number for this job.  For example, this might be 90 (to indicate MC)
 # plus the 6 digit date (YYMMDD) for the date of the software version.
-RUN_NUMBER=90180727
+RUN_NUMBER=90180822
 
 # The number of events to generate
 EVENT_COUNT=$1
@@ -43,8 +43,8 @@ shift
 # a good idea to include the job number in the name.
 # Examples: 
 #   JOB_NAME=lansceProton_${SLURM_JOB_ID}        # For slurm
-  JOB_NAME=lansceProton_${SLURM_ARRAY_JOB_ID}  # For slurm with a job array
-#   JOB_NAME=lansceProton_${PBS_JOBID}           # For PBS
+#   JOB_NAME=lansceProton_${SLURM_ARRAY_JOB_ID}  # For slurm with a job array
+  JOB_NAME=lansceProton_${PBS_JOBID}           # For PBS
 #   JOB_NAME=lansceProton                        # For testing
 ###########################################################################
 
@@ -71,20 +71,20 @@ export UDOCKER_DIR=/home/mcgrew/work/captain/software/udocker-1.1.1
 # The location where the job should be run.  This directory needs to
 # be created before the job is run.  It will be mapped to "/home/work"
 # inside the udocker job.
-export WORK_DIR=/home/mcgrew/tmp/work
+export WORK_DIR=/gpfs/scratch/cmcgrew/captain_180822/work
 ###########################################################################
 
 # The location where the input data should be read from (not used for
 # most MC jobs).  This will be mapped to "/home/data" inside the
 # udocker job.  If absolutely nothing is read, or written to
 # /home/data, the it doesn't need to be attached
-export DATA_DIR=/home/mcgrew/tmp/data
+export DATA_DIR=/gpfs/scratch/cmcgrew/captain_180822/data
 ###########################################################################
 
 ###########################################################################
 # The location where the output data should be written.  It will be
 # mapped to "/home/output" inside of the udocker jobs.
-export OUTPUT_DIR=/home/mcgrew/tmp/output
+export OUTPUT_DIR=/gpfs/scratch/cmcgrew/captain_180822/output
 ###########################################################################
 
 # Create a new working directory under neet ${WORK_DIR}.  Notice that
@@ -93,6 +93,12 @@ export OUTPUT_DIR=/home/mcgrew/tmp/output
 JOB_DIR=${WORK_DIR}/${JOB_NAME}
 if [ ! -f ${JOB_DIR} ] ; then
     mkdir -p ${JOB_DIR}
+fi
+
+# Create a new output directory (in case it needs to be done).  Notice
+# that this is happening outside of udocker.
+if [ ! -f ${OUTPUT_DIR} ] ; then
+    mkdir -p ${OUTPUT_DIR}
 fi
 
 # Define some variables that will be substituted into the
@@ -109,7 +115,7 @@ JOB_PACKAGE=$(basename ${JOB_PACKAGE})
 ${UDOCKER_DIR}/udocker run -v ${WORK_DIR}:/home/work \
     -v ${DATA_DIR}:/home/data \
     -v ${OUTPUT_DIR}:/home/output \
-    captainRelease_180802 <<EOF
+    captainRelease_180822 <<EOF
 source /home/captain/CAPTAIN/captain.profile
 cd /home/work
 
@@ -147,24 +153,18 @@ cd /home/output/${JOB_NAME}/${JOB_PACKAGE}
 /home/captain/captain-release/master/detSim/scripts/detsim-lansce-proton ${RUN_NUMBER} ${EVENT_COUNT}
 
 # Put the various types of output files into their own special locations.
-if [ ! -f /home/output/${JOB_NAME}/reco ]; then
-    mkdir -p /home/output/${JOB_NAME}/reco || true
-fi
+mkdir -p /home/output/${JOB_NAME}/reco || true
 mv *_reco_*.root /home/output/${JOB_NAME}/reco || true
 
-if [ ! -f /home/output/${JOB_NAME}/g4mc ]; then
-    mkdir /home/output/${JOB_NAME}/g4mc || true
-fi
+mkdir -p /home/output/${JOB_NAME}/g4mc || true
 mv *_g4mc_*.root /home/output/${JOB_NAME}/g4mc || true
 
-if [ ! -f /home/output/${JOB_NAME}/log ]; then
-    mkdir /home/output/${JOB_NAME}/log || true
-fi
+mkdir -p /home/output/${JOB_NAME}/log || true
 mv captControl*.log /home/output/${JOB_NAME}/log || true
 
 # Clean up the temporary files that were created as the job ran.
 cd /home/output
-ls /home/output/${JOB_NAME}/${JOB_PACKAGE}
 rm -rf /home/output/${JOB_NAME}/${JOB_PACKAGE} || true
 
 EOF
+
