@@ -16,10 +16,18 @@
 # to install it using
 #
 # udocker load -i captainRelease.tar
-# udocker run --name="captain_180727" captain/release:latest
+# udocker run --name="captain_180802" captain/release:latest
 #
 # You can choose any container name you want.  I suggest that you
 # check the udocker documentation for more information.
+
+######################
+# This particular script is submitted with a single command line
+# argument for the number of events to generate.
+#
+# Example (for slurm):  sbatch --array=0-10 example-docker.sh 10
+#
+######################
 
 # The run number for this job.  For example, this might be 90 (to indicate MC)
 # plus the 6 digit date (YYMMDD) for the date of the software version.
@@ -33,8 +41,11 @@ shift
 # This should be set to something that is going to be useful.  The
 # actual structure of this will depend on the queue system, but it is
 # a good idea to include the job number in the name.
-JOB_NAME=lansceProton_${SLURM_JOB_ID}  # For slurm
-JOB_NAME=lansceProton_${PBS_JOBID}     # For PBS
+# Examples: 
+#   JOB_NAME=lansceProton_${SLURM_JOB_ID}        # For slurm
+  JOB_NAME=lansceProton_${SLURM_ARRAY_JOB_ID}  # For slurm with a job array
+#   JOB_NAME=lansceProton_${PBS_JOBID}           # For PBS
+#   JOB_NAME=lansceProton                        # For testing
 ###########################################################################
 
 ###########################################################################
@@ -46,7 +57,7 @@ JOB_NAME=lansceProton_${PBS_JOBID}     # For PBS
 ###########################################################################
 # This needs to be adjusted to point to the location where udocker is
 # installed.
-export UDOCKER_DIR=/gpfs/projects/McGrewGroup/mcgrew/captain/udocker-1.1.1
+export UDOCKER_DIR=/home/mcgrew/work/captain/software/udocker-1.1.1
 ###########################################################################
 
 ###########################################################################
@@ -60,20 +71,20 @@ export UDOCKER_DIR=/gpfs/projects/McGrewGroup/mcgrew/captain/udocker-1.1.1
 # The location where the job should be run.  This directory needs to
 # be created before the job is run.  It will be mapped to "/home/work"
 # inside the udocker job.
-export WORK_DIR=/gpfs/scratch/cmcgrew/captain_180727/work
+export WORK_DIR=/home/mcgrew/tmp/work
 ###########################################################################
 
 # The location where the input data should be read from (not used for
 # most MC jobs).  This will be mapped to "/home/data" inside the
 # udocker job.  If absolutely nothing is read, or written to
 # /home/data, the it doesn't need to be attached
-export DATA_DIR=/gpfs/scratch/cmcgrew/captain_180727/data
+export DATA_DIR=/home/mcgrew/tmp/data
 ###########################################################################
 
 ###########################################################################
 # The location where the output data should be written.  It will be
 # mapped to "/home/output" inside of the udocker jobs.
-export OUTPUT_DIR=/gpfs/scratch/cmcgrew/captain_180727/output
+export OUTPUT_DIR=/home/mcgrew/tmp/output
 ###########################################################################
 
 # Create a new working directory under neet ${WORK_DIR}.  Notice that
@@ -98,7 +109,7 @@ JOB_PACKAGE=$(basename ${JOB_PACKAGE})
 ${UDOCKER_DIR}/udocker run -v ${WORK_DIR}:/home/work \
     -v ${DATA_DIR}:/home/data \
     -v ${OUTPUT_DIR}:/home/output \
-    captainRelease_180727 <<EOF
+    captainRelease_180802 <<EOF
 source /home/captain/CAPTAIN/captain.profile
 cd /home/work
 
