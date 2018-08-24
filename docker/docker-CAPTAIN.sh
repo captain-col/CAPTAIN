@@ -61,7 +61,9 @@
 # ls -l
 # EOF
 
-docker image build -t captain/release - <<EOF
+VERS=$(date +%y%m%d)
+
+docker image build --no-cache -t captain/release:${VERS} - <<EOF
 ######################################################################
 # Build a CAPTAIN working environment to run batch jobs.
 #
@@ -76,6 +78,9 @@ RUN cd /home/captain/captain-release/master/captainRelease/cmt  && \
      bash -c "source /home/captain/CAPTAIN/captain.profile; cmt config"
 
 RUN cd /home/captain/captain-release/master/captainRelease/cmt  && \
+     bash -c "source /home/captain/CAPTAIN/captain.profile; cmt broadcast git pull"
+
+RUN cd /home/captain/captain-release/master/captainRelease/cmt  && \
      bash -c "source /home/captain/CAPTAIN/captain.profile; cmt broadcast cmt config"
 
 RUN cd /home/captain/captain-release/master/captainRelease/cmt  && \
@@ -85,7 +90,7 @@ CMD ["bash"]
 
 EOF
 
-docker save captain/release:latest -o captainRelease.tar
+docker save captain/release:${VERS} -o captainRelease_$(date +%y%m%d).tar
 
 
 echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
