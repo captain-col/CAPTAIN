@@ -7,8 +7,10 @@
 # processor, but does a pretty bad job at the variant and release.
 # This converts "-" to "_" because the "-" is used as a delimiter.
 os=$(uname | tr '-' '_')
-variant=$(uname -v | tr '-' '_')
-release=$(uname -r | tr '-' '_')
+# variant=$(uname -v | tr '-' '_')
+variant="unknown"
+# release=$(uname -r | tr '-' '_')
+release="unknown"
 processor=$(uname -m | tr '-' '_')
 compiler="unknown"
 
@@ -16,12 +18,16 @@ compiler="unknown"
 # variant and release of the system.
 if [ -x /usr/bin/lsb_release ]; then
     variant=$(/usr/bin/lsb_release -s -i)
-    if false; then
+    releaseStyle="full"
+    if [ ${variant} = "Debian" ]; then
+	releaseStyle="major"
+    fi
+    if [ ${releaseStyle} = "full" ]; then
+	# Use the full release name.
+	release=$(/usr/bin/lsb_release -s -r)
+    else
 	# Only take the major release (up to the first ".")
 	release=$(/usr/bin/lsb_release -s -r | sed s/\\..*//)
-    else
-	# Only take the full release
-	release=$(/usr/bin/lsb_release -s -r)
     fi
 fi
 
