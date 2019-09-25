@@ -1,38 +1,73 @@
 #!/bin/bash
 #
-# Print the code name for the current system.  This is suitable for
-# setting the CMTCONFIG variable.
+# Determine the system type for CAPTAIN
+#
+
+# This converts "-" to "_" because the "-" is used as a delimiter.
 
 # Use uname to set some defaults.  uname is OK for the OS and
-# processor, but does a pretty bad job at the variant and release.
-# This converts "-" to "_" because the "-" is used as a delimiter.
+# processor, but does a bad job at the variant and release.  Fortunately, 
+# lsb_release seems to be everyplace, just set unknown as a default.
 os=$(uname | tr '-' '_')
-# variant=$(uname -v | tr '-' '_')
-variant="unknown"
-# release=$(uname -r | tr '-' '_')
-release="unknown"
+variant=$(uname -v | tr '-' '_')
+release=$(uname -r | tr '-' '_')
 processor=$(uname -m | tr '-' '_')
 compiler="unknown"
 
-# If the system provides the linux standard base, then query the
-# variant and release of the system.
+# Try hard to find the system variant and release.
 if [ -x /usr/bin/lsb_release ]; then
     variant=$(/usr/bin/lsb_release -s -i)
-    releaseStyle="full"
-    if [ ${variant} = "Debian" ]; then
-	releaseStyle="major"
-    fi
-    if [ ${releaseStyle} = "full" ]; then
-	# Use the full release name.
-	release=$(/usr/bin/lsb_release -s -r)
-    else
-	# Only take the major release (up to the first ".")
-	release=$(/usr/bin/lsb_release -s -r | sed s/\\..*//)
-    fi
+    release=$(/usr/bin/lsb_release -s -r)
+elif [ -f /etc/system-release ]; then
+    variant=$(cat /etc/system-release | cut -d' ' -f1) 
+    release=$(cat /etc/system-release | sed 's/[^0123456789.]//g')
+elif [ -f /etc/redhat-release ]; then
+    variant=$(cat /etc/redhat-release | cut -d' ' -f1) 
+    release=$(cat /etc/redhat-release | sed 's/[^0123456789.]//g')
+elif [ -f /etc/centos-release ]; then
+    variant=$(cat /etc/centos-release | cut -d' ' -f1) 
+    release=$(cat /etc/centos-release | sed 's/[^0123456789.]//g')
+elif [ -f /etc/debian_version ]; then
+    # Don't all Debian systems have lsb_release?
+    variant=Debian
+    release=$(cat /etc/debian_version)
 fi
 
+# If the compiler is gcc, then it provides it's version.
 if which gcc >> /dev/null; then
     compiler=gcc_$(gcc -dumpversion)
+fi
+
+# Clean up the release.
+releaseStyle="full"
+if [ ${variant} = "Debian" ]; then
+    releaseStyle="one"
+elif [ ${variant} = "CentOS" ]; then
+    releaseStyle="one"
+fi
+if [ ${releaseStyle} = "full" ]; then
+	# Use the full release name.
+    release=${release}
+elif [ ${releaseStyle} = "two" ]; then
+    release=$(echo ${release} | sed 's/\(\..*\)\..*/\1/')
+else # one
+	# Only take the major release (up to the first ".")
+    release=$(echo ${release} | sed s/\\..*//)
+fi
+
+# Clean up the compiler.
+compilerStyle="one"
+if [ $(echo ${compiler} | sed s/_4.*//) = "gcc" ]; then
+    compilerStyle="two"
+fi
+if [ ${compilerStyle} = "full" ]; then
+	# Use the full compiler version.
+    compiler=${compiler}
+elif [ ${compilerStyle} = "two" ]; then
+    compiler=$(echo ${compiler} | sed 's/\(\..*\)\..*/\1/')
+else  # one
+	# Only take the major release (up to the first ".")
+    compiler=$(echo ${compiler} | sed s/\\..*//)
 fi
 
 # Form the system name, and get rid of invalid characters.
